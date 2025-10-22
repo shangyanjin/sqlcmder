@@ -1,4 +1,4 @@
-package components
+package commands
 
 import (
 	"context"
@@ -14,9 +14,76 @@ import (
 	"sqlcmder/models"
 )
 
+// BackupDatabase performs database backup
+func BackupDatabase(filename string, ctx Context, onSuccess func(string), onError func(string)) {
+	if ctx.ConnectionModel == nil {
+		onError("Connection information not available")
+		return
+	}
+
+	conn := ctx.ConnectionModel
+	provider := strings.ToLower(conn.Provider)
+	dbName := ctx.CurrentDatabase
+	if dbName == "" {
+		dbName = conn.DBName
+	}
+
+	logger.Info("Database backup", map[string]any{
+		"provider": provider,
+		"database": dbName,
+		"file":     filename,
+	})
+
+	switch provider {
+	case "mysql":
+		backupMySQL(filename, dbName, conn, onSuccess, onError)
+	case "postgres", "postgresql":
+		backupPostgreSQL(filename, dbName, conn, onSuccess, onError)
+	case "sqlite":
+		backupSQLite(filename, dbName, conn, onSuccess, onError)
+	case "mssql", "sqlserver":
+		backupMSSQL(filename, dbName, conn, onSuccess, onError)
+	default:
+		onError("Backup not supported for provider: " + provider)
+	}
+}
+
+// ImportDatabase imports data from SQL file
+func ImportDatabase(filename string, ctx Context, onSuccess func(string), onError func(string), onRefresh func()) {
+	if ctx.ConnectionModel == nil {
+		onError("Connection information not available")
+		return
+	}
+
+	conn := ctx.ConnectionModel
+	provider := strings.ToLower(conn.Provider)
+	dbName := ctx.CurrentDatabase
+	if dbName == "" {
+		dbName = conn.DBName
+	}
+
+	logger.Info("Database import", map[string]any{
+		"provider": provider,
+		"database": dbName,
+		"file":     filename,
+	})
+
+	switch provider {
+	case "mysql":
+		importMySQL(filename, dbName, conn, onSuccess, onError, onRefresh)
+	case "postgres", "postgresql":
+		importPostgreSQL(filename, dbName, conn, onSuccess, onError, onRefresh)
+	case "sqlite":
+		importSQLite(filename, dbName, conn, onSuccess, onError, onRefresh)
+	case "mssql", "sqlserver":
+		importMSSQL(filename, dbName, conn, onSuccess, onError, onRefresh)
+	default:
+		onError("Import not supported for provider: " + provider)
+	}
+}
+
 // MySQL backup using mysqldump
-func (cl *CommandLine) backupMySQL(filename string, dbName string, conn *models.Connection) {
-	// Build mysqldump command
+func backupMySQL(filename string, dbName string, conn *models.Connection, onSuccess func(string), onError func(string)) {
 	args := []string{
 		"-h", conn.Hostname,
 		"-P", conn.Port,
@@ -29,10 +96,9 @@ func (cl *CommandLine) backupMySQL(filename string, dbName string, conn *models.
 
 	args = append(args, dbName)
 
-	// Create backup directory if needed
 	backupDir := filepath.Join(".", "backup")
 	if err := os.MkdirAll(backupDir, 0755); err != nil {
-		ShowError("Failed to create backup directory: " + err.Error())
+		onError("Failed to create backup directory: " + err.Error())
 		return
 	}
 
@@ -43,11 +109,10 @@ func (cl *CommandLine) backupMySQL(filename string, dbName string, conn *models.
 		"output": outputFile,
 	})
 
-	// Execute mysqldump
 	cmd := exec.Command("mysqldump", args...)
 	outFile, err := os.Create(outputFile)
 	if err != nil {
-		ShowError("Failed to create backup file: " + err.Error())
+		onError("Failed to create backup file: " + err.Error())
 		return
 	}
 	defer outFile.Close()
@@ -57,34 +122,31 @@ func (cl *CommandLine) backupMySQL(filename string, dbName string, conn *models.
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		ShowError("Backup failed: " + err.Error() + " - " + stderr.String())
+		onError("Backup failed: " + err.Error() + " - " + stderr.String())
 		return
 	}
 
-	ShowSuccess(fmt.Sprintf("Database backed up to: %s", outputFile))
+	onSuccess(fmt.Sprintf("Database backed up to: %s", outputFile))
 }
 
 // PostgreSQL backup using pg_dump
-func (cl *CommandLine) backupPostgreSQL(filename string, dbName string, conn *models.Connection) {
-	// Build pg_dump command
-	args := []string{
-		"-h", conn.Hostname,
-		"-p", conn.Port,
-		"-U", conn.Username,
-		"-F", "p", // Plain text format
-		"-f", filename,
-		dbName,
-	}
-
-	// Create backup directory if needed
+func backupPostgreSQL(filename string, dbName string, conn *models.Connection, onSuccess func(string), onError func(string)) {
 	backupDir := filepath.Join(".", "backup")
 	if err := os.MkdirAll(backupDir, 0755); err != nil {
-		ShowError("Failed to create backup directory: " + err.Error())
+		onError("Failed to create backup directory: " + err.Error())
 		return
 	}
 
 	outputFile := filepath.Join(backupDir, filename)
-	args[5] = outputFile // Update -f argument with full path
+
+	args := []string{
+		"-h", conn.Hostname,
+		"-p", conn.Port,
+		"-U", conn.Username,
+		"-F", "p",
+		"-f", outputFile,
+		dbName,
+	}
 
 	logger.Info("Executing pg_dump", map[string]any{
 		"args":   args,
@@ -93,7 +155,6 @@ func (cl *CommandLine) backupPostgreSQL(filename string, dbName string, conn *mo
 
 	cmd := exec.Command("pg_dump", args...)
 
-	// Set PGPASSWORD environment variable
 	if conn.Password != "" {
 		cmd.Env = append(os.Environ(), fmt.Sprintf("PGPASSWORD=%s", conn.Password))
 	}
@@ -102,25 +163,23 @@ func (cl *CommandLine) backupPostgreSQL(filename string, dbName string, conn *mo
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		ShowError("Backup failed: " + err.Error() + " - " + stderr.String())
+		onError("Backup failed: " + err.Error() + " - " + stderr.String())
 		return
 	}
 
-	ShowSuccess(fmt.Sprintf("Database backed up to: %s", outputFile))
+	onSuccess(fmt.Sprintf("Database backed up to: %s", outputFile))
 }
 
 // SQLite backup by copying file
-func (cl *CommandLine) backupSQLite(filename string, dbName string, conn *models.Connection) {
-	// For SQLite, dbName is the file path
+func backupSQLite(filename string, dbName string, conn *models.Connection, onSuccess func(string), onError func(string)) {
 	sourceFile := conn.DBName
 	if sourceFile == "" {
 		sourceFile = dbName
 	}
 
-	// Create backup directory if needed
 	backupDir := filepath.Join(".", "backup")
 	if err := os.MkdirAll(backupDir, 0755); err != nil {
-		ShowError("Failed to create backup directory: " + err.Error())
+		onError("Failed to create backup directory: " + err.Error())
 		return
 	}
 
@@ -131,54 +190,48 @@ func (cl *CommandLine) backupSQLite(filename string, dbName string, conn *models
 		"dest":   outputFile,
 	})
 
-	// Copy file
 	source, err := os.Open(sourceFile)
 	if err != nil {
-		ShowError("Failed to open source file: " + err.Error())
+		onError("Failed to open source file: " + err.Error())
 		return
 	}
 	defer source.Close()
 
 	dest, err := os.Create(outputFile)
 	if err != nil {
-		ShowError("Failed to create backup file: " + err.Error())
+		onError("Failed to create backup file: " + err.Error())
 		return
 	}
 	defer dest.Close()
 
 	if _, err := io.Copy(dest, source); err != nil {
-		ShowError("Failed to copy database: " + err.Error())
+		onError("Failed to copy database: " + err.Error())
 		return
 	}
 
-	ShowSuccess(fmt.Sprintf("Database backed up to: %s", outputFile))
+	onSuccess(fmt.Sprintf("Database backed up to: %s", outputFile))
 }
 
-// MSSQL backup using T-SQL BACKUP DATABASE
-func (cl *CommandLine) backupMSSQL(filename string, dbName string, conn *models.Connection) {
-	// Create backup directory if needed
+// MSSQL backup using sqlcmd
+func backupMSSQL(filename string, dbName string, conn *models.Connection, onSuccess func(string), onError func(string)) {
 	backupDir := filepath.Join(".", "backup")
 	if err := os.MkdirAll(backupDir, 0755); err != nil {
-		ShowError("Failed to create backup directory: " + err.Error())
+		onError("Failed to create backup directory: " + err.Error())
 		return
 	}
 
-	// For MSSQL, backup path must be accessible by SQL Server
-	// Use absolute path
 	absPath, err := filepath.Abs(filepath.Join(backupDir, filename))
 	if err != nil {
-		ShowError("Failed to resolve backup path: " + err.Error())
+		onError("Failed to resolve backup path: " + err.Error())
 		return
 	}
 
-	// Build sqlcmd command
 	backupSQL := fmt.Sprintf("BACKUP DATABASE [%s] TO DISK = '%s' WITH FORMAT, COMPRESSION", dbName, absPath)
 
 	logger.Info("Executing MSSQL backup", map[string]any{
 		"sql": backupSQL,
 	})
 
-	// Use sqlcmd command line tool
 	args := []string{
 		"-S", fmt.Sprintf("%s,%s", conn.Hostname, conn.Port),
 		"-U", conn.Username,
@@ -194,21 +247,19 @@ func (cl *CommandLine) backupMSSQL(filename string, dbName string, conn *models.
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		ShowError("Backup failed: " + err.Error() + " - " + stderr.String())
+		onError("Backup failed: " + err.Error() + " - " + stderr.String())
 		return
 	}
 
-	ShowSuccess(fmt.Sprintf("Database backed up to: %s", absPath))
+	onSuccess(fmt.Sprintf("Database backed up to: %s", absPath))
 }
 
 // MySQL import using mysql client
-func (cl *CommandLine) importMySQL(filename string, dbName string, conn *models.Connection) {
-	// Check if file exists
+func importMySQL(filename string, dbName string, conn *models.Connection, onSuccess func(string), onError func(string), onRefresh func()) {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		// Try in backup directory
 		backupFile := filepath.Join(".", "backup", filename)
 		if _, err := os.Stat(backupFile); os.IsNotExist(err) {
-			ShowError("Import file not found: " + filename)
+			onError("Import file not found: " + filename)
 			return
 		}
 		filename = backupFile
@@ -219,7 +270,6 @@ func (cl *CommandLine) importMySQL(filename string, dbName string, conn *models.
 		"database": dbName,
 	})
 
-	// Build mysql command
 	args := []string{
 		"-h", conn.Hostname,
 		"-P", conn.Port,
@@ -234,10 +284,9 @@ func (cl *CommandLine) importMySQL(filename string, dbName string, conn *models.
 
 	cmd := exec.Command("mysql", args...)
 
-	// Read SQL file
 	inFile, err := os.Open(filename)
 	if err != nil {
-		ShowError("Failed to open import file: " + err.Error())
+		onError("Failed to open import file: " + err.Error())
 		return
 	}
 	defer inFile.Close()
@@ -247,22 +296,20 @@ func (cl *CommandLine) importMySQL(filename string, dbName string, conn *models.
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		ShowError("Import failed: " + err.Error() + " - " + stderr.String())
+		onError("Import failed: " + err.Error() + " - " + stderr.String())
 		return
 	}
 
-	ShowSuccess("Database imported successfully")
-	RefreshTree()
+	onSuccess("Database imported successfully")
+	onRefresh()
 }
 
 // PostgreSQL import using psql
-func (cl *CommandLine) importPostgreSQL(filename string, dbName string, conn *models.Connection) {
-	// Check if file exists
+func importPostgreSQL(filename string, dbName string, conn *models.Connection, onSuccess func(string), onError func(string), onRefresh func()) {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		// Try in backup directory
 		backupFile := filepath.Join(".", "backup", filename)
 		if _, err := os.Stat(backupFile); os.IsNotExist(err) {
-			ShowError("Import file not found: " + filename)
+			onError("Import file not found: " + filename)
 			return
 		}
 		filename = backupFile
@@ -273,7 +320,6 @@ func (cl *CommandLine) importPostgreSQL(filename string, dbName string, conn *mo
 		"database": dbName,
 	})
 
-	// Build psql command
 	args := []string{
 		"-h", conn.Hostname,
 		"-p", conn.Port,
@@ -284,7 +330,6 @@ func (cl *CommandLine) importPostgreSQL(filename string, dbName string, conn *mo
 
 	cmd := exec.Command("psql", args...)
 
-	// Set PGPASSWORD environment variable
 	if conn.Password != "" {
 		cmd.Env = append(os.Environ(), fmt.Sprintf("PGPASSWORD=%s", conn.Password))
 	}
@@ -293,22 +338,20 @@ func (cl *CommandLine) importPostgreSQL(filename string, dbName string, conn *mo
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		ShowError("Import failed: " + err.Error() + " - " + stderr.String())
+		onError("Import failed: " + err.Error() + " - " + stderr.String())
 		return
 	}
 
-	ShowSuccess("Database imported successfully")
-	RefreshTree()
+	onSuccess("Database imported successfully")
+	onRefresh()
 }
 
 // SQLite import by reading SQL file
-func (cl *CommandLine) importSQLite(filename string, dbName string, conn *models.Connection) {
-	// Check if file exists
+func importSQLite(filename string, dbName string, conn *models.Connection, onSuccess func(string), onError func(string), onRefresh func()) {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		// Try in backup directory
 		backupFile := filepath.Join(".", "backup", filename)
 		if _, err := os.Stat(backupFile); os.IsNotExist(err) {
-			ShowError("Import file not found: " + filename)
+			onError("Import file not found: " + filename)
 			return
 		}
 		filename = backupFile
@@ -319,16 +362,13 @@ func (cl *CommandLine) importSQLite(filename string, dbName string, conn *models
 		"database": dbName,
 	})
 
-	// Read SQL file
 	sqlBytes, err := os.ReadFile(filename)
 	if err != nil {
-		ShowError("Failed to read import file: " + err.Error())
+		onError("Failed to read import file: " + err.Error())
 		return
 	}
 
 	sqlContent := string(sqlBytes)
-
-	// Split into individual statements (basic split by semicolon)
 	statements := strings.Split(sqlContent, ";")
 
 	ctx := context.Background()
@@ -340,7 +380,6 @@ func (cl *CommandLine) importSQLite(filename string, dbName string, conn *models
 			continue
 		}
 
-		// Execute statement using helpers.RunCommand
 		err := helpers.RunCommand(ctx, fmt.Sprintf("sqlite3 %s \"%s;\"", dbName, stmt), func(output string) {
 			logger.Debug("SQL executed", map[string]any{"output": output})
 		})
@@ -352,18 +391,16 @@ func (cl *CommandLine) importSQLite(filename string, dbName string, conn *models
 		}
 	}
 
-	ShowSuccess(fmt.Sprintf("Import completed: %d statements executed", successCount))
-	RefreshTree()
+	onSuccess(fmt.Sprintf("Import completed: %d statements executed", successCount))
+	onRefresh()
 }
 
-// MSSQL import by reading SQL file
-func (cl *CommandLine) importMSSQL(filename string, dbName string, conn *models.Connection) {
-	// Check if file exists
+// MSSQL import using sqlcmd
+func importMSSQL(filename string, dbName string, conn *models.Connection, onSuccess func(string), onError func(string), onRefresh func()) {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		// Try in backup directory
 		backupFile := filepath.Join(".", "backup", filename)
 		if _, err := os.Stat(backupFile); os.IsNotExist(err) {
-			ShowError("Import file not found: " + filename)
+			onError("Import file not found: " + filename)
 			return
 		}
 		filename = backupFile
@@ -374,7 +411,6 @@ func (cl *CommandLine) importMSSQL(filename string, dbName string, conn *models.
 		"database": dbName,
 	})
 
-	// Build sqlcmd command
 	args := []string{
 		"-S", fmt.Sprintf("%s,%s", conn.Hostname, conn.Port),
 		"-U", conn.Username,
@@ -391,10 +427,11 @@ func (cl *CommandLine) importMSSQL(filename string, dbName string, conn *models.
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		ShowError("Import failed: " + err.Error() + " - " + stderr.String())
+		onError("Import failed: " + err.Error() + " - " + stderr.String())
 		return
 	}
 
-	ShowSuccess("Database imported successfully")
-	RefreshTree()
+	onSuccess("Database imported successfully")
+	onRefresh()
 }
+

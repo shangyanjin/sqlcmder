@@ -598,3 +598,6 @@
 {"timestamp":"2025-10-22T18:19:26+08:00","level":"INFO","message":"Command line execute","additional_info":{"args":[],"command":"help","raw":"help"}}
 {"timestamp":"2025-10-22T18:19:27+08:00","level":"DEBUG","message":"Focus right wrapper"}
 {"timestamp":"2025-10-22T18:19:31+08:00","level":"INFO","message":"Command line execute","additional_info":{"args":[],"command":"help","raw":"help"}}
+{"timestamp":"2025-10-22T18:38:30+08:00","level":"INFO","message":"Starting SQLCmder..."}
+{"timestamp":"2025-10-22T18:38:43+08:00","level":"INFO","message":"Reading saved queries from file","additional_info":{"file":"C:\\Users\\Administrator\\AppData\\Roaming\\sqlcmder\\saved_queries\\support.toml"}}
+{"timestamp":"2025-10-22T18:38:55+08:00","level":"DEBUG","message":"Focus right wrapper"}

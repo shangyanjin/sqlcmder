@@ -9,6 +9,7 @@ import (
 
 	"sqlcmder/app"
 	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/commands"
 )
 
 // CommandLine is a 2-row command line with message display and input
@@ -206,11 +207,20 @@ func (cl *CommandLine) ExecuteCommand(cmd string, ctx CommandContext) {
 		"raw":     cmd,
 	})
 
+	// Convert CommandContext to commands.Context
+	cmdCtx := commands.Context{
+		DB:              ctx.DB,
+		CurrentDatabase: ctx.CurrentDatabase,
+		CurrentTable:    ctx.CurrentTable,
+		Connection:      ctx.Connection,
+		ConnectionModel: ctx.ConnectionModel,
+	}
+
 	switch command {
 	case "db", "database":
-		cl.handleDatabaseCommand(args, ctx)
+		commands.ExecuteDatabaseCommand(args, cmdCtx, ShowSuccess, ShowError, ShowInfo, RefreshTree)
 	case "table", "tbl", "t":
-		cl.handleTableCommand(args, ctx)
+		commands.ExecuteTableCommand(args, cmdCtx, ShowSuccess, ShowError, RefreshTree)
 	case "help", "h", "?", "/?", "/help":
 		cl.showCommandHelp(args)
 	case "q", "quit", "exit":
@@ -218,158 +228,7 @@ func (cl *CommandLine) ExecuteCommand(cmd string, ctx CommandContext) {
 		app.App.Stop()
 	default:
 		// Treat as SQL query
-		logger.Info("Execute SQL", map[string]any{"sql": cmd})
-		cl.executeSQL(cmd, ctx)
-	}
-}
-
-func (cl *CommandLine) handleDatabaseCommand(args []string, ctx CommandContext) {
-	if len(args) == 0 {
-		ShowError("Usage: db <create|drop|use|list|backup|import> <name>")
-		return
-	}
-
-	action := args[0]
-	switch action {
-	case "create", "c":
-		if len(args) < 2 {
-			ShowError("Usage: db create <name>")
-			return
-		}
-		dbName := args[1]
-		_, err := ctx.DB.ExecuteDMLStatement("CREATE DATABASE `" + dbName + "`")
-		if err != nil {
-			ShowError("Failed to create database: " + err.Error())
-		} else {
-			ShowSuccess("Database '" + dbName + "' created")
-			RefreshTree()
-		}
-	case "drop", "d":
-		if len(args) < 2 {
-			ShowError("Usage: db drop <name>")
-			return
-		}
-		dbName := args[1]
-		_, err := ctx.DB.ExecuteDMLStatement("DROP DATABASE `" + dbName + "`")
-		if err != nil {
-			ShowError("Failed to drop database: " + err.Error())
-		} else {
-			ShowSuccess("Database '" + dbName + "' dropped")
-			RefreshTree()
-		}
-	case "use", "u":
-		if len(args) < 2 {
-			ShowError("Usage: db use <name>")
-			return
-		}
-		dbName := args[1]
-		_, err := ctx.DB.ExecuteDMLStatement("USE `" + dbName + "`")
-		if err != nil {
-			ShowError("Failed to switch database: " + err.Error())
-		} else {
-			ShowSuccess("Switched to database '" + dbName + "'")
-			RefreshTree()
-		}
-	case "list", "ls", "l":
-		databases, err := ctx.DB.GetDatabases()
-		if err != nil {
-			ShowError("Failed to get databases: " + err.Error())
-			return
-		}
-		ShowInfo("Databases:\n" + strings.Join(databases, "\n"))
-	case "backup", "b":
-		if len(args) < 2 {
-			ShowError("Usage: db backup <filename>")
-			return
-		}
-		filename := args[1]
-		cl.handleBackup(filename, ctx)
-	case "import", "i":
-		if len(args) < 2 {
-			ShowError("Usage: db import <filename>")
-			return
-		}
-		filename := args[1]
-		cl.handleImport(filename, ctx)
-	default:
-		ShowError("Unknown database command: " + action)
-	}
-}
-
-func (cl *CommandLine) handleTableCommand(args []string, ctx CommandContext) {
-	if len(args) == 0 {
-		ShowError("Usage: table <create|drop|truncate|rename> <name>")
-		return
-	}
-
-	action := args[0]
-	switch action {
-	case "create", "c":
-		if len(args) < 2 {
-			ShowError("Usage: table create <name>")
-			return
-		}
-		tableName := args[1]
-		sql := "CREATE TABLE `" + tableName + "` (id INT AUTO_INCREMENT PRIMARY KEY)"
-		_, err := ctx.DB.ExecuteDMLStatement(sql)
-		if err != nil {
-			ShowError("Failed to create table: " + err.Error())
-		} else {
-			ShowSuccess("Table '" + tableName + "' created")
-			RefreshTree()
-		}
-	case "drop", "d":
-		if len(args) < 2 {
-			ShowError("Usage: table drop <name>")
-			return
-		}
-		tableName := args[1]
-		_, err := ctx.DB.ExecuteDMLStatement("DROP TABLE `" + tableName + "`")
-		if err != nil {
-			ShowError("Failed to drop table: " + err.Error())
-		} else {
-			ShowSuccess("Table '" + tableName + "' dropped")
-			RefreshTree()
-		}
-	case "truncate", "t":
-		if len(args) < 2 {
-			ShowError("Usage: table truncate <name>")
-			return
-		}
-		tableName := args[1]
-		_, err := ctx.DB.ExecuteDMLStatement("TRUNCATE TABLE `" + tableName + "`")
-		if err != nil {
-			ShowError("Failed to truncate table: " + err.Error())
-		} else {
-			ShowSuccess("Table '" + tableName + "' truncated")
-		}
-	case "rename", "r":
-		if len(args) < 3 {
-			ShowError("Usage: table rename <old> <new>")
-			return
-		}
-		oldName := args[1]
-		newName := args[2]
-		sql := "ALTER TABLE `" + oldName + "` RENAME TO `" + newName + "`"
-		_, err := ctx.DB.ExecuteDMLStatement(sql)
-		if err != nil {
-			ShowError("Failed to rename table: " + err.Error())
-		} else {
-			ShowSuccess("Table renamed to '" + newName + "'")
-			RefreshTree()
-		}
-	default:
-		ShowError("Unknown table command: " + action)
-	}
-}
-
-func (cl *CommandLine) executeSQL(sql string, ctx CommandContext) {
-	_, err := ctx.DB.ExecuteDMLStatement(sql)
-	if err != nil {
-		ShowError("SQL Error: " + err.Error())
-	} else {
-		ShowSuccess("SQL executed successfully")
-		RefreshTree()
+		commands.ExecuteSQL(cmd, cmdCtx, ShowSuccess, ShowError, RefreshTree)
 	}
 }
 
@@ -695,72 +554,4 @@ func (cl *CommandLine) showHelpModal(content string) {
 
 	// Show modal
 	ShowModal(textView, 80, 25)
-}
-
-// handleBackup performs database backup
-func (cl *CommandLine) handleBackup(filename string, ctx CommandContext) {
-	if ctx.ConnectionModel == nil {
-		ShowError("Connection information not available")
-		return
-	}
-
-	conn := ctx.ConnectionModel
-	provider := strings.ToLower(conn.Provider)
-	dbName := ctx.CurrentDatabase
-	if dbName == "" {
-		dbName = conn.DBName
-	}
-
-	logger.Info("Database backup", map[string]any{
-		"provider": provider,
-		"database": dbName,
-		"file":     filename,
-	})
-
-	switch provider {
-	case "mysql":
-		cl.backupMySQL(filename, dbName, conn)
-	case "postgres", "postgresql":
-		cl.backupPostgreSQL(filename, dbName, conn)
-	case "sqlite":
-		cl.backupSQLite(filename, dbName, conn)
-	case "mssql", "sqlserver":
-		cl.backupMSSQL(filename, dbName, conn)
-	default:
-		ShowError("Backup not supported for provider: " + provider)
-	}
-}
-
-// handleImport imports data from SQL file
-func (cl *CommandLine) handleImport(filename string, ctx CommandContext) {
-	if ctx.ConnectionModel == nil {
-		ShowError("Connection information not available")
-		return
-	}
-
-	conn := ctx.ConnectionModel
-	provider := strings.ToLower(conn.Provider)
-	dbName := ctx.CurrentDatabase
-	if dbName == "" {
-		dbName = conn.DBName
-	}
-
-	logger.Info("Database import", map[string]any{
-		"provider": provider,
-		"database": dbName,
-		"file":     filename,
-	})
-
-	switch provider {
-	case "mysql":
-		cl.importMySQL(filename, dbName, conn)
-	case "postgres", "postgresql":
-		cl.importPostgreSQL(filename, dbName, conn)
-	case "sqlite":
-		cl.importSQLite(filename, dbName, conn)
-	case "mssql", "sqlserver":
-		cl.importMSSQL(filename, dbName, conn)
-	default:
-		ShowError("Import not supported for provider: " + provider)
-	}
 }
