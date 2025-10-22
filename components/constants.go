@@ -3,7 +3,7 @@ package components
 import (
 	"github.com/gdamore/tcell/v2"
 
-	"sqlcmder/app"
+	"sqlcmder/internal/app"
 )
 
 var App = app.App

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"sqlcmder/drivers"
-	"sqlcmder/helpers"
+	"sqlcmder/internal/drivers"
+	"sqlcmder/internal/helpers"
 	"sqlcmder/models"
 )
 

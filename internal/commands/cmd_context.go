@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"sqlcmder/drivers"
+	"sqlcmder/internal/drivers"
 	"sqlcmder/models"
 )
 

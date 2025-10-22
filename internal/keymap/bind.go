@@ -3,7 +3,7 @@ package keymap
 import (
 	"fmt"
 
-	"sqlcmder/commands"
+	"sqlcmder/internal/commands"
 )
 
 // Struct that holds a key and a command

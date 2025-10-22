@@ -5,7 +5,7 @@ import (
 
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
+	"sqlcmder/internal/app"
 )
 
 // RegisterTableCommands registers all table-related commands

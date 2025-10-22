@@ -3,7 +3,7 @@ package components
 import (
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
+	"sqlcmder/internal/app"
 )
 
 type Header struct {

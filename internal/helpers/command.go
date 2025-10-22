@@ -11,7 +11,7 @@ import (
 
 	"github.com/mitchellh/go-linereader"
 
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/helpers/logger"
 )
 
 // [doneFn] is invoked when the [command] is completed with its stdout.

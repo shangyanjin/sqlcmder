@@ -9,8 +9,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"sqlcmder/app"
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/app"
+	"sqlcmder/internal/helpers/logger"
 	"sqlcmder/models"
 )
 

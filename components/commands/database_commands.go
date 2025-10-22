@@ -6,7 +6,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
+	"sqlcmder/internal/app"
 	"sqlcmder/components"
 )
 
@@ -30,7 +30,7 @@ func RegisterDatabaseCommands(cp *CommandPalette) {
 		ID:          "db.drop",
 		Name:        "Drop Database",
 		Description: "Delete current database",
-		Icon:        "🗑️",
+		Icon:        "🗑�?,
 		Category:    "Database",
 		Handler:     handleDropDatabase,
 		Enabled: func(ctx CommandContext) bool {

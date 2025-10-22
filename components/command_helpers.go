@@ -3,8 +3,8 @@ package components
 import (
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/app"
+	"sqlcmder/internal/helpers/logger"
 )
 
 const (

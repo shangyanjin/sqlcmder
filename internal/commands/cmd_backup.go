@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"sqlcmder/helpers"
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/helpers"
+	"sqlcmder/internal/helpers/logger"
 	"sqlcmder/models"
 )
 

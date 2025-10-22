@@ -10,9 +10,9 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 
-	"sqlcmder/app"
+	"sqlcmder/internal/app"
 	"sqlcmder/components"
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/helpers/logger"
 )
 
 var version = "dev"

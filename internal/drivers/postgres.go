@@ -11,7 +11,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/xo/dburl"
 
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/helpers/logger"
 	"sqlcmder/models"
 )
 

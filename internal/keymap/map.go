@@ -3,7 +3,7 @@ package keymap
 import (
 	"github.com/gdamore/tcell/v2"
 
-	"sqlcmder/commands"
+	"sqlcmder/internal/commands"
 )
 
 // Map is a collection of keybinds

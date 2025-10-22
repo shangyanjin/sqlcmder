@@ -8,7 +8,7 @@ import (
 
 	"github.com/pelletier/go-toml/v2"
 
-	"sqlcmder/drivers"
+	"sqlcmder/internal/drivers"
 	"sqlcmder/models"
 )
 

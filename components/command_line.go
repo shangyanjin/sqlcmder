@@ -7,8 +7,8 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/app"
+	"sqlcmder/internal/helpers/logger"
 	"sqlcmder/internal/commands"
 )
 

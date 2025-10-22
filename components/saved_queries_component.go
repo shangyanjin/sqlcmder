@@ -6,11 +6,11 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
-	"sqlcmder/commands"
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/app"
+	"sqlcmder/internal/commands"
+	"sqlcmder/internal/helpers/logger"
 	"sqlcmder/internal/saved"
-	"sqlcmder/lib"
+	"sqlcmder/internal/lib"
 	"sqlcmder/models"
 )
 

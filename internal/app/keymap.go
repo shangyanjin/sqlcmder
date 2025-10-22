@@ -3,8 +3,8 @@ package app
 import (
 	"github.com/gdamore/tcell/v2"
 
-	cmd "sqlcmder/commands"
-	"sqlcmder/keymap"
+	cmd "sqlcmder/internal/commands"
+	"sqlcmder/internal/keymap"
 )
 
 // local alias added for clarity purpose

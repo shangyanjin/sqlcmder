@@ -5,7 +5,7 @@ import (
 
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
+	"sqlcmder/internal/app"
 )
 
 type ResultsTableMenuState struct {

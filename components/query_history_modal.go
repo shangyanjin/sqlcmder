@@ -4,8 +4,8 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
-	"sqlcmder/commands"
+	"sqlcmder/internal/app"
+	"sqlcmder/internal/commands"
 )
 
 type QueryHistoryModal struct {

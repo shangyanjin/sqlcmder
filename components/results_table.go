@@ -8,13 +8,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/rivo/tview"
 
-	"sqlcmder/app"
-	"sqlcmder/commands"
-	"sqlcmder/drivers"
-	"sqlcmder/helpers"
-	"sqlcmder/helpers/logger"
+	"sqlcmder/internal/app"
+	"sqlcmder/internal/commands"
+	"sqlcmder/internal/drivers"
+	"sqlcmder/internal/helpers/logger"
 	"sqlcmder/internal/history"
-	"sqlcmder/lib"
+	"sqlcmder/internal/lib"
 	"sqlcmder/models"
 )
 
@@ -363,7 +362,7 @@ func (table *ResultsTable) tableInputCapture(event *tcell.EventKey) *tcell.Event
 
 	menuCommands := []commands.Command{commands.RecordsMenu, commands.ColumnsMenu, commands.ConstraintsMenu, commands.ForeignKeysMenu, commands.IndexesMenu, commands.Refresh}
 
-	if helpers.ContainsCommand(menuCommands, command) {
+	if commands.Contains(menuCommands, command) {
 		table.Select(1, 0)
 	}
 
