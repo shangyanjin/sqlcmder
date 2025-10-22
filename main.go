@@ -11,7 +11,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 
 	"sqlcmder/internal/app"
-	"sqlcmder/components"
+	"sqlcmder/ui"
 	"sqlcmder/internal/helpers/logger"
 )
 
@@ -72,7 +72,7 @@ func main() {
 	}
 
 	// Now we can initialize the main pages.
-	mainPages := components.MainPages()
+	mainPages := ui.MainPages()
 
 	// Parse the command line arguments.
 	args := flag.Args()
@@ -82,7 +82,7 @@ func main() {
 		// Launch into the connection picker.
 	case 1:
 		// Set a connection from the command line.
-		err := components.InitFromArg(args[0])
+		err := ui.InitFromArg(args[0])
 		if err != nil {
 			log.Fatal(err)
 		}
