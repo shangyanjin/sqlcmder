@@ -9,10 +9,10 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
 	"sqlcmder/internal/commands"
-	"sqlcmder/internal/logger"
 	"sqlcmder/internal/helpers"
+	"sqlcmder/internal/keymap"
+	"sqlcmder/internal/logger"
 )
 
 type JSONViewer struct {
@@ -46,7 +46,7 @@ func NewJSONViewer(pages *tview.Pages) *JSONViewer {
 	pages.AddPage(pageNameJSONViewer, jsonViewer, true, false)
 
 	textView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		command := app.Keymaps.Group(app.JSONViewerGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.JSONViewerGroup).Resolve(event)
 
 		if event.Key() == tcell.KeyEscape || command == commands.ShowCellJSONViewer || command == commands.ShowRowJSONViewer {
 			jsonViewer.Hide()

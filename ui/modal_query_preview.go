@@ -8,6 +8,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
 	"sqlcmder/internal/logger"
@@ -59,7 +60,7 @@ func NewQueryPreviewModal(queries *[]models.DBDMLChange, dbdriver drivers.Driver
 	keybindings.SetBorder(true)
 	keybindings.SetTitle(" Keybindings ")
 
-	for _, command := range app.Keymaps.Group(app.QueryPreviewGroup) {
+	for _, command := range keymap.Keymaps.Group(keymap.QueryPreviewGroup) {
 		keybindings.SetText(fmt.Sprintf("%s [yellow](%s) [default]%s", keybindings.GetText(false), command.Key.String(), command.Description))
 	}
 
@@ -75,7 +76,7 @@ func NewQueryPreviewModal(queries *[]models.DBDMLChange, dbdriver drivers.Driver
 	}
 
 	table.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		command := app.Keymaps.Group(app.QueryPreviewGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.QueryPreviewGroup).Resolve(event)
 
 		if command == commands.Quit || event.Key() == tcell.KeyEsc {
 			mainPages.RemovePage(pageNameDMLPreview)

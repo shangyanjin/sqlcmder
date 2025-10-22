@@ -9,7 +9,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"sqlcmder/internal/app"
+	"sqlcmder/internal/config"
 	"sqlcmder/internal/logger"
 	"sqlcmder/models"
 )
@@ -22,7 +22,7 @@ const (
 
 // GetAppConfigDir returns the application's configuration directory.
 func GetAppConfigDir() (string, error) {
-	configDir, err := app.GetConfigPath()
+	configDir, err := config.GetConfigPath()
 	if err != nil {
 		return "", fmt.Errorf("failed to get user config directory: %w", err)
 	}

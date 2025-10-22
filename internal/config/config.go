@@ -1,4 +1,4 @@
-package app
+package config
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ type Config struct {
 	Connections []models.Connection `toml:"database"`
 }
 
-func defaultConfig() *Config {
+func DefaultConfig() *Config {
 	return &Config{
 		AppConfig: &models.AppConfig{
 			DefaultPageSize:              300,
@@ -52,19 +52,19 @@ func DefaultConfigFile() (string, error) {
 	return filepath.Join(exeDir, "config.toml"), nil
 }
 
-func LoadConfig(configFile string) error {
+func LoadConfig(configFile string, config *Config) error {
 	file, err := os.ReadFile(configFile)
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
 
-	err = toml.Unmarshal(file, App.config)
+	err = toml.Unmarshal(file, config)
 	if err != nil {
 		return err
 	}
 
-	for i, conn := range App.config.Connections {
-		App.config.Connections[i].DSN = parseConfigDSN(&conn)
+	for i, conn := range config.Connections {
+		config.Connections[i].DSN = parseConfigDSN(&conn)
 	}
 
 	return nil

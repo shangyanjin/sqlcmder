@@ -1,17 +1,9 @@
-package app
+package keymap
 
 import (
 	"github.com/gdamore/tcell/v2"
 
 	cmd "sqlcmder/internal/commands"
-	"sqlcmder/internal/keymap"
-)
-
-// local alias added for clarity purpose
-type (
-	Bind = keymap.Bind
-	Key  = keymap.Key
-	Map  = keymap.Map
 )
 
 // KeymapSystem is the actual key mapping system.

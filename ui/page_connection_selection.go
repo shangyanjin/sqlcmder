@@ -10,6 +10,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
 	"sqlcmder/internal/helpers"
@@ -87,7 +88,7 @@ func NewConnectionSelection(connectionForm *ConnectionForm, connectionPages *mod
 	wrapper.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		connections := connectionsTable.GetConnections()
 
-		command := app.Keymaps.Group(app.ConnectionGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.ConnectionGroup).Resolve(event)
 
 		if len(connections) != 0 {
 			row, _ := connectionsTable.GetSelection()

@@ -1,3 +1,5 @@
+//go:build !disable_sqlite_import
+
 package drivers
 
 import (
@@ -5,6 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	// import sqlite driver
+	_ "modernc.org/sqlite"
 
 	"sqlcmder/models"
 )

@@ -10,6 +10,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	"sqlcmder/internal/config"
 	"sqlcmder/models"
 )
 
@@ -21,7 +22,7 @@ var (
 type Application struct {
 	*tview.Application
 
-	config    *Config
+	config    *config.Config
 	context   context.Context
 	cancelFn  context.CancelFunc
 	waitGroup sync.WaitGroup
@@ -38,7 +39,7 @@ func init() {
 
 	App = &Application{
 		Application: tview.NewApplication(),
-		config:      defaultConfig(),
+		config:      config.DefaultConfig(),
 		context:     ctx,
 		cancelFn:    cancel,
 	}
@@ -75,6 +76,11 @@ func (a *Application) Context() context.Context {
 // Config returns the application configuration.
 func (a *Application) Config() *models.AppConfig {
 	return a.config.AppConfig
+}
+
+// GetConfig returns the full configuration object.
+func (a *Application) GetConfig() *config.Config {
+	return a.config
 }
 
 // Connections returns the database connections.

@@ -9,6 +9,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
 	"sqlcmder/internal/logger"
@@ -303,7 +304,7 @@ func (home *Home) focusLeftWrapper() {
 func (home *Home) rightWrapperInputCapture(event *tcell.EventKey) *tcell.EventKey {
 	var tab *Tab
 
-	command := app.Keymaps.Group(app.TableGroup).Resolve(event)
+	command := keymap.Keymaps.Group(keymap.TableGroup).Resolve(event)
 
 	switch command {
 	case commands.TabPrev:
@@ -492,7 +493,7 @@ func (home *Home) homeInputCapture(event *tcell.EventKey) *tcell.EventKey {
 		}
 	}
 
-	command := app.Keymaps.Group(app.HomeGroup).Resolve(event)
+	command := keymap.Keymaps.Group(keymap.HomeGroup).Resolve(event)
 
 	if command != commands.Noop {
 		logger.Debug("Command resolved", map[string]any{

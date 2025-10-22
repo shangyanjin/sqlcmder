@@ -33,7 +33,7 @@ func NewHelpModal() *HelpModal {
 		Wrapper: tview.NewFlex(),
 	}
 
-	for group, binds := range app.Keymaps.Groups {
+	for group, binds := range keymap.Keymaps.Groups {
 		modal.KeybindGroups = append(modal.KeybindGroups, KeybindGroup{
 			Group: group,
 			Binds: binds,
@@ -87,7 +87,7 @@ func NewHelpModal() *HelpModal {
 			return nil
 		}
 
-		command := app.Keymaps.Group(app.HomeGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.HomeGroup).Resolve(event)
 
 		if command == commands.Quit || command == commands.HelpPopup || event.Key() == tcell.KeyEsc {
 			modal.showSearchBar(false)

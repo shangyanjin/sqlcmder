@@ -4,9 +4,9 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/models"
 )
 
@@ -64,7 +64,7 @@ func (list *SetValueList) OnFinish(callback func(selection models.CellValueType,
 	})
 
 	list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		command := app.Keymaps.Group(app.TableGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.TableGroup).Resolve(event)
 
 		if command == commands.SetValue {
 			list.Hide()

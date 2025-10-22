@@ -11,6 +11,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/config"
 	"sqlcmder/internal/db"
 	"sqlcmder/internal/logger"
 	"sqlcmder/ui"
@@ -19,7 +20,7 @@ import (
 var version = "dev"
 
 func main() {
-	defaultConfigPath, err := app.DefaultConfigFile()
+	defaultConfigPath, err := config.DefaultConfigFile()
 	if err != nil {
 		log.Fatalf("Error getting default config file: %v", err)
 	}
@@ -68,7 +69,7 @@ func main() {
 	}
 
 	// First load the config.
-	if err = app.LoadConfig(*configFile); err != nil {
+	if err = config.LoadConfig(*configFile, app.App.GetConfig()); err != nil {
 		log.Fatalf("Error loading config: %v", err)
 	}
 

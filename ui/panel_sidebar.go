@@ -7,6 +7,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/helpers"
 	"sqlcmder/models"
@@ -224,7 +225,7 @@ func (sidebar *Sidebar) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 	}
 
-	command := app.Keymaps.Group(app.SidebarGroup).Resolve(event)
+	command := keymap.Keymaps.Group(keymap.SidebarGroup).Resolve(event)
 
 	switch command {
 	case commands.UnfocusSidebar:
@@ -251,7 +252,7 @@ func (sidebar *Sidebar) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 		columnName = columnNameSplit[0]
 
 		sidebar.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-			command := app.Keymaps.Group(app.SidebarGroup).Resolve(event)
+			command := keymap.Keymaps.Group(keymap.SidebarGroup).Resolve(event)
 
 			switch command {
 			case commands.CommitEdit:

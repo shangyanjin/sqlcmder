@@ -5,6 +5,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 )
 
@@ -82,7 +83,7 @@ func NewQueryHistoryModal(connectionIdentifier string, onSelect func(query strin
 			return nil
 		}
 
-		command := app.Keymaps.Group(app.QueryHistoryGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.QueryHistoryGroup).Resolve(event)
 
 		switch command {
 		case commands.ToggleQueryHistory:

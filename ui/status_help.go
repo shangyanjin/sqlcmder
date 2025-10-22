@@ -42,13 +42,13 @@ func (status *HelpStatus) UpdateText(binds []keymap.Bind) {
 }
 
 func (status *HelpStatus) SetStatusOnTree() {
-	status.UpdateText(app.Keymaps.Global)
+	status.UpdateText(keymap.Keymaps.Global)
 }
 
 func (status *HelpStatus) SetStatusOnEditorView() {
-	status.UpdateText(app.Keymaps.Group(app.EditorGroup))
+	status.UpdateText(keymap.Keymaps.Group(keymap.EditorGroup))
 }
 
 func (status *HelpStatus) SetStatusOnTableView() {
-	status.UpdateText(app.Keymaps.Group(app.TableGroup))
+	status.UpdateText(keymap.Keymaps.Group(keymap.TableGroup))
 }

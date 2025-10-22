@@ -9,6 +9,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/logger"
 	"sqlcmder/models"
@@ -38,7 +39,7 @@ func NewSQLEditor(connectionURL string) *SQLEditor {
 		ConnectionURL: connectionURL,
 	}
 	sqlEditor.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		command := app.Keymaps.Group(app.EditorGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.EditorGroup).Resolve(event)
 
 		switch command {
 		case commands.Execute:

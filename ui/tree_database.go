@@ -12,6 +12,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
 	"sqlcmder/internal/logger"
@@ -139,7 +140,7 @@ func NewTree(dbName string, dbdriver drivers.Driver) *Tree {
 	})
 
 	tree.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		command := app.Keymaps.Group(app.TreeGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.TreeGroup).Resolve(event)
 
 		switch command {
 		case commands.GotoBottom:

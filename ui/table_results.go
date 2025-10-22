@@ -9,6 +9,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
 	"sqlcmder/internal/logger"
@@ -358,7 +359,7 @@ func (table *ResultsTable) tableInputCapture(event *tcell.EventKey) *tcell.Event
 
 	eventKey := event.Rune()
 
-	command := app.Keymaps.Group(app.TableGroup).Resolve(event)
+	command := keymap.Keymaps.Group(keymap.TableGroup).Resolve(event)
 
 	menuCommands := []commands.Command{commands.RecordsMenu, commands.ColumnsMenu, commands.ConstraintsMenu, commands.ForeignKeysMenu, commands.IndexesMenu, commands.Refresh}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/logger"
 	"sqlcmder/internal/storage/history"
@@ -72,7 +73,7 @@ func NewQueryHistoryComponent(connectionIdentifier string, onSelect func(query s
 	qhc.Flex = layout
 
 	layout.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		command := app.Keymaps.Group(app.QueryHistoryGroup).Resolve(event)
+		command := keymap.Keymaps.Group(keymap.QueryHistoryGroup).Resolve(event)
 
 		switch command {
 		case commands.Save:

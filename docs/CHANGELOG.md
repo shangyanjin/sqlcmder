@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-10-22
+
+### Major Package Structure Refactoring
+
+#### Configuration Management Separation
+- **Created dedicated `internal/config/` package**
+  - Moved `config.go` from `internal/app/` to `internal/config/`
+  - Separated configuration logic from application core
+  - Updated package declaration: `package app` → `package config`
+  - Resolved circular import issues between app and config packages
+
+#### Keymap System Reorganization  
+- **Moved keymap system to `internal/keymap/` package**
+  - Renamed `keymap_system.go` to `config.go` for better clarity
+  - Consolidated all keymap-related files under single package
+  - Updated all UI components to import from `sqlcmder/internal/keymap`
+  - Removed redundant `_keymap` suffixes from filenames
+
+#### File Naming Standardization
+- **Eliminated generic suffixes across all packages**
+  - `cmd_palette_main.go` → `cmd_palette.go` (avoided `main` naming)
+  - `manager_history.go` → `query_history.go` (business-specific naming)
+  - `manager_saved.go` → `saved_queries.go` (business-specific naming)
+  - `core.go` → `app.go` (removed generic `core` suffix)
+  - `command_helper.go` → `command.go` (removed redundant `_helper`)
+  - `utils_helper.go` → `utils.go` (removed redundant `_helper`)
+  - `sqlite_driver.go` → merged into `sqlite.go` (eliminated duplicate)
+
+#### Package Dependency Optimization
+- **Resolved circular import cycles**
+  - Modified `LoadConfig()` to accept config parameter instead of accessing global state
+  - Added `GetConfig()` method to Application for accessing full configuration object
+  - Updated all import paths and function calls throughout codebase
+  - Maintained backward compatibility while improving architecture
+
+#### Model Consolidation
+- **Merged `saved_query.go` into `models.go`**
+  - Consolidated all model definitions in single file
+  - Reduced file fragmentation
+  - Improved code organization
+
+#### Build System Improvements
+- **Fixed all compilation errors**
+  - Resolved import path issues after package moves
+  - Removed unused imports across all files
+  - Ensured clean compilation with `go build`
+  - Maintained full functionality after refactoring
+
+### Technical Benefits
+- **Better separation of concerns**: Configuration, keymaps, and application logic are now properly separated
+- **Improved maintainability**: Clear package boundaries and consistent naming conventions
+- **Reduced complexity**: Eliminated circular dependencies and generic naming
+- **Enhanced readability**: Business-specific file names make code purpose immediately clear
+- **Future-proof architecture**: Clean package structure supports easier feature additions
+
 ## [0.2.0] - 2025-10-22
 
 ### Major Refactoring - Project Structure Reorganization
