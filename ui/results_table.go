@@ -12,7 +12,7 @@ import (
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
 	"sqlcmder/internal/logger"
-	"sqlcmder/internal/lib"
+	"sqlcmder/internal/helpers"
 	"sqlcmder/internal/storage/history"
 	"sqlcmder/models"
 )
@@ -506,7 +506,7 @@ func (table *ResultsTable) tableInputCapture(event *tcell.EventKey) *tcell.Event
 	} else if command == commands.Copy {
 		selectedCell := table.GetCell(selectedRowIndex, selectedColumnIndex)
 		if selectedCell != nil {
-			clipboard := lib.NewClipboard()
+			clipboard := helpers.NewClipboard()
 			err := clipboard.Write(selectedCell.Text)
 			if err != nil {
 				table.SetError(err.Error(), nil)

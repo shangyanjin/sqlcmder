@@ -11,7 +11,7 @@ import (
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
 	"sqlcmder/internal/logger"
-	"sqlcmder/internal/lib"
+	"sqlcmder/internal/helpers"
 	"sqlcmder/models"
 )
 
@@ -103,7 +103,7 @@ func NewQueryPreviewModal(queries *[]models.DBDMLChange, dbdriver drivers.Driver
 			row, col := table.GetSelection()
 			queryStr := table.GetCell(row, col).Text
 
-			clipboard := lib.NewClipboard()
+			clipboard := helpers.NewClipboard()
 
 			err := clipboard.Write(queryStr)
 			if err != nil {

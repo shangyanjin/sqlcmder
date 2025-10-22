@@ -8,7 +8,7 @@ import (
 
 	"sqlcmder/internal/app"
 	"sqlcmder/internal/commands"
-	"sqlcmder/internal/lib"
+	"sqlcmder/internal/helpers"
 	"sqlcmder/models"
 )
 
@@ -313,7 +313,7 @@ func (sidebar *Sidebar) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 		item := sidebar.Flex.GetItem(currentItemIndex).(*tview.TextArea)
 		text := item.GetText()
 
-		clipboard := lib.NewClipboard()
+		clipboard := helpers.NewClipboard()
 
 		err := clipboard.Write(text)
 		if err != nil {

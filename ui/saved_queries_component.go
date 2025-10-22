@@ -10,7 +10,7 @@ import (
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/logger"
 	"sqlcmder/internal/storage/saved"
-	"sqlcmder/internal/lib"
+	"sqlcmder/internal/helpers"
 	"sqlcmder/models"
 )
 
@@ -84,7 +84,7 @@ func NewSavedQueriesComponent(connectionIdentifier string, onSelect func(query s
 			row, _ := sqc.table.GetSelection()
 			queryStr := sqc.table.GetCell(row, 1).GetReference().(string)
 
-			clipboard := lib.NewClipboard()
+			clipboard := helpers.NewClipboard()
 
 			err := clipboard.Write(queryStr)
 			if err != nil {

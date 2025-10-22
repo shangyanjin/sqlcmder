@@ -12,7 +12,7 @@ import (
 	"sqlcmder/internal/app"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/logger"
-	"sqlcmder/internal/lib"
+	"sqlcmder/internal/helpers"
 )
 
 type JSONViewer struct {
@@ -52,7 +52,7 @@ func NewJSONViewer(pages *tview.Pages) *JSONViewer {
 			jsonViewer.Hide()
 			return nil
 		} else if command == commands.Copy {
-			clipboard := lib.NewClipboard()
+			clipboard := helpers.NewClipboard()
 			err := clipboard.Write(jsonViewer.TextView.GetText(true))
 			if err != nil {
 				logger.Error("Error copying JSON to clipboard", map[string]any{"error": err.Error()})

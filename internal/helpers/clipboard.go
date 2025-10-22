@@ -1,4 +1,4 @@
-package lib
+package helpers
 
 import "github.com/atotto/clipboard"
 
