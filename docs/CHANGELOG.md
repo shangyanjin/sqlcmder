@@ -8,15 +8,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Comprehensive command line help system
-  - Support for `help`, `?`, `/?`, `/help` commands
-  - Detailed help for specific topics: `help insert`, `help update`, `help delete`, `help select`
-  - Database and table command syntax documentation
-  - Modal dialog with scrollable help content
+- **VI-Style Command Line (CMDER)** - Major new feature
+  - Built-in command interpreter accessible via `Ctrl+\` or typing `:`
+  - Two-row interface: system messages (row 1) + user input with `SQL#` prompt (row 2)
+  - Real-time command execution for database operations
+  - Command history navigation with Up/Down arrow keys
+  - Auto-focus management: messages display and return focus to input automatically
+  - Supports direct SQL execution and built-in commands
+  
+- **Database Quick Commands**
+  - `db create <name>` - Create database
+  - `db drop <name>` - Drop database  
+  - `db use <name>` - Switch database
+  - `db list` - List all databases
+
+- **Table Quick Commands**
+  - `table create <name>` - Create table (interactive)
+  - `table drop <name>` - Drop table
+  - `table truncate <name>` - Clear table data
+  - `table rename <old> <new>` - Rename table
+
+- **Comprehensive Help System**
+  - Multiple help triggers: `help`, `?`, `/?`, `/help`
+  - Detailed syntax help: `help insert`, `help update`, `help delete`, `help select`, `help db`, `help table`
+  - Modal dialog with scrollable content showing SQL syntax, examples, and best practices
+  - Context-aware command suggestions
+
 - Connection selection screen enhancements
   - Hint bar showing available shortcuts: "Up/Down Select, Enter Connect, New, Edit, Delete, Quit"
-  - Selected connection marked with `*` prefix
-- Command history navigation with Up/Down arrow keys
+  - Selected connection marked with `*` prefix in yellow
 - Navicat-style two-column connection form layout for better space utilization
 - Auto-generated DSN field that updates in real-time as form fields change
 - Database preset shortcuts: Alt+P (PostgreSQL), Alt+M (MySQL), Alt+S (SQLite), Alt+Q (SQL Server)
