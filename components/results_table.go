@@ -12,7 +12,7 @@ import (
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
 	"sqlcmder/internal/helpers/logger"
-	"sqlcmder/internal/history"
+	"sqlcmder/internal/storage/history"
 	"sqlcmder/internal/lib"
 	"sqlcmder/models"
 )

@@ -5,7 +5,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
-	"sqlcmder/internal/saved"
+	"sqlcmder/internal/storage/saved"
 )
 
 // SaveQueryModal is a modal for saving a query with a name.
