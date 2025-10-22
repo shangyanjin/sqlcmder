@@ -1,0 +1,12 @@
+tmp/build-errors.log
+.air.toml
+tmp/main
+
+dist/
+test.db
+
+.aider*
+
+# Ignore executables
+*.exe
+*.exe~
