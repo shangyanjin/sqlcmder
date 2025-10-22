@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	historyDirName       = "history"
-	lazysqlConfigDirName = "sqlcmder" // This should match your application's config directory name
-	historyFileExtension = ".json"
+	historyDirName        = "history"
+	sqlcmderConfigDirName = "sqlcmder" // This should match your application's config directory name
+	historyFileExtension  = ".json"
 )
 
 // GetAppConfigDir returns the application's configuration directory.
@@ -28,7 +28,7 @@ func GetAppConfigDir() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get user config directory: %w", err)
 	}
-	return filepath.Join(configDir, lazysqlConfigDirName), nil
+	return filepath.Join(configDir, sqlcmderConfigDirName), nil
 }
 
 // SanitizeFilename prepares a string to be used as a part of a filename.

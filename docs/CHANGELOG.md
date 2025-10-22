@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2025-10-22
+
+### Documentation Enhancement
+
+#### MVC Architecture Planning
+- **Added comprehensive MVC refactoring plan**
+  - Created detailed `docs/plan.md` with English documentation
+  - Outlined 4-phase refactoring approach (Service → Controller → View → Repository)
+  - Defined clear separation of concerns for each layer
+  - Provided implementation guidelines and risk mitigation strategies
+  - Included success metrics and timeline estimates (10-13 weeks total)
+
+#### Architecture Documentation Benefits
+- **Clear roadmap for future development**
+  - Identified current architectural issues and improvement opportunities
+  - Proposed clean MVC structure with proper layer separation
+  - Defined responsibilities for Model, View, Controller, Service, and Repository layers
+  - Provided phased implementation approach to minimize disruption
+  - Enhanced project maintainability and scalability planning
+
 ## [0.3.0] - 2025-10-22
 
 ### Major Package Structure Refactoring
@@ -82,10 +102,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `cmd_sql.go` - SQL execution handler
   - `cmd_utils.go` - Utility functions (e.g., Contains)
   
-- **Reorganized storage layer under `internal/storage/`**
-  - `internal/storage/history/` - Query execution history (JSON)
-  - `internal/storage/saved/` - Saved query templates (TOML)
-  - Clear separation: storage vs business logic
+ - **Reorganized storage layer under `internal/storage/`**
+   - `internal/storage/history/` - Query execution history (JSON)
+   - `internal/storage/saved/` - Saved query templates (TOML)
+   - Clear separation: storage vs business logic
   
 - **Moved all core packages to `internal/`**
   - `internal/app/` - Application core (from `app/`)

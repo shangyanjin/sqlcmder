@@ -9,12 +9,12 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
-	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
+	"sqlcmder/internal/keymap"
 	"sqlcmder/internal/logger"
-	"sqlcmder/internal/storage/history"
 	"sqlcmder/models"
+	"sqlcmder/internal/storage/history"
 )
 
 type Home struct {

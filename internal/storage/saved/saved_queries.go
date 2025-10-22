@@ -16,7 +16,7 @@ import (
 
 const (
 	SavedQueriesDirName       = "saved_queries"
-	lazysqlConfigDirName      = "sqlcmder"
+	sqlcmderConfigDirName     = "sqlcmder"
 	savedQueriesFileExtension = ".toml"
 )
 
@@ -26,7 +26,7 @@ func GetAppConfigDir() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get user config directory: %w", err)
 	}
-	return filepath.Join(configDir, lazysqlConfigDirName), nil
+	return filepath.Join(configDir, sqlcmderConfigDirName), nil
 }
 
 // SanitizeFilename prepares a string to be used as a part of a filename.

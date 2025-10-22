@@ -179,7 +179,7 @@ sqlcmder/
 
 ## Credits
 
-Based on [LazySQL](https://github.com/jorgerojas26/lazysql) by Jorge Rojas.
+Based on [LazySQL](https://github.com/jorgerojas26/sqlcmder) by Jorge Rojas.
 
 ## License
 
