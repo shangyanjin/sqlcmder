@@ -36,7 +36,7 @@ func NewSidebar(dbProvider string) *Sidebar {
 	frame := tview.NewFrame(flex)
 	frame.SetBackgroundColor(app.Styles.PrimitiveBackgroundColor)
 	frame.SetBorder(true)
-	frame.SetBorderColor(app.Styles.InverseTextColor)
+	frame.SetBorderColor(app.Styles.UnfocusedBorderColor)
 	// Keep default borders, don't set to 0
 	// frame.SetBorders(0, 0, 0, 0, 0, 0)
 

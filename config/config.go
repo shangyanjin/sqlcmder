@@ -24,6 +24,7 @@ func DefaultConfig() *Config {
 			DefaultPageSize:              300,
 			SidebarOverlay:               false,
 			MaxQueryHistoryPerConnection: 100,
+			Theme:                        models.ThemeDark, // Default to dark theme
 		},
 	}
 }

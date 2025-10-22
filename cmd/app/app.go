@@ -32,6 +32,11 @@ type Theme struct {
 	tview.Theme
 
 	SidebarTitleBorderColor string
+	ButtonBackgroundColor   tcell.Color
+	UnfocusedBorderColor    tcell.Color
+	UnfocusedTextColor      tcell.Color
+	UnfocusedAccentColor    tcell.Color
+	SelectedTextColor       tcell.Color
 }
 
 func init() {
@@ -48,24 +53,48 @@ func init() {
 	App.EnableMouse(true)
 	App.EnablePaste(true)
 
+	// Initialize with default theme (will be overridden after config loads)
+	initializeTheme(models.ThemeDark)
+}
+
+// initializeTheme sets up the color scheme based on the theme name
+func initializeTheme(themeName string) {
+	// Set the active color scheme
+	models.SetActiveColorScheme(themeName)
+	scheme := models.ActiveColorScheme
+
 	Styles = &Theme{
 		Theme: tview.Theme{
 			PrimitiveBackgroundColor:    tcell.ColorDefault,
 			ContrastBackgroundColor:     tcell.ColorBlue,
 			MoreContrastBackgroundColor: tcell.ColorGreen,
-			BorderColor:                 tcell.ColorWhite,
-			TitleColor:                  tcell.ColorWhite,
+			BorderColor:                 scheme.Border,
+			TitleColor:                  scheme.TextColor,
 			GraphicsColor:               tcell.ColorGray,
-			PrimaryTextColor:            tcell.ColorDefault.TrueColor(),
-			SecondaryTextColor:          tcell.ColorYellow,
-			TertiaryTextColor:           tcell.ColorGreen,
-			InverseTextColor:            tcell.ColorWhite,
-			ContrastSecondaryTextColor:  tcell.ColorBlack,
+			PrimaryTextColor:            scheme.TextColor,
+			SecondaryTextColor:          scheme.AccentYellow,
+			TertiaryTextColor:           scheme.AccentGreen,
+			InverseTextColor:            scheme.InputBg,
+			ContrastSecondaryTextColor:  scheme.SelectedTextColor,
 		},
 		SidebarTitleBorderColor: "#666A7E",
+		ButtonBackgroundColor:   scheme.ButtonBg,
+		UnfocusedBorderColor:    scheme.UnfocusedBorder,
+		UnfocusedTextColor:      scheme.UnfocusedText,
+		UnfocusedAccentColor:    scheme.UnfocusedAccent,
+		SelectedTextColor:       scheme.SelectedTextColor,
 	}
 
 	tview.Styles = Styles.Theme
+}
+
+// ApplyTheme applies the theme from the configuration
+func (a *Application) ApplyTheme() {
+	themeName := a.config.AppConfig.Theme
+	if themeName == "" {
+		themeName = models.ThemeDark
+	}
+	initializeTheme(themeName)
 }
 
 // Context returns the application context.

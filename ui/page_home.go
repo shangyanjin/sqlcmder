@@ -142,10 +142,10 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 
 	go home.subscribeToTreeChanges()
 
-	leftWrapper.SetBorderColor(app.Styles.InverseTextColor)
+	leftWrapper.SetBorderColor(app.Styles.UnfocusedBorderColor)
 	leftWrapper.AddItem(tree.Wrapper, 0, 1, true)
 
-	rightWrapper.SetBorderColor(app.Styles.InverseTextColor)
+	rightWrapper.SetBorderColor(app.Styles.UnfocusedBorderColor)
 	rightWrapper.SetBorder(true) // Overall border like left panel
 	rightWrapper.SetDirection(tview.FlexColumnCSS)
 	rightWrapper.SetInputCapture(home.rightWrapperInputCapture)
@@ -236,7 +236,7 @@ func (home *Home) focusRightWrapper() {
 	home.Tree.RemoveHighlight()
 
 	home.RightWrapper.SetBorderColor(app.Styles.PrimaryTextColor)
-	home.LeftWrapper.SetBorderColor(app.Styles.InverseTextColor)
+	home.LeftWrapper.SetBorderColor(app.Styles.UnfocusedBorderColor)
 	home.TabbedPane.Highlight()
 	tab := home.TabbedPane.GetCurrentTab()
 
@@ -282,7 +282,7 @@ func (home *Home) focusLeftWrapper() {
 	logger.Debug("Focus left wrapper", nil)
 	home.Tree.Highlight()
 
-	home.RightWrapper.SetBorderColor(app.Styles.InverseTextColor)
+	home.RightWrapper.SetBorderColor(app.Styles.UnfocusedBorderColor)
 	home.LeftWrapper.SetBorderColor(app.Styles.PrimaryTextColor)
 
 	tab := home.TabbedPane.GetCurrentTab()

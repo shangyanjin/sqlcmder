@@ -51,14 +51,14 @@ func NewCommandPalette() *CommandPalette {
 	cp.SetDirection(tview.FlexRow)
 	cp.SetBorder(true)
 	cp.SetTitle(" Command Palette (Ctrl+P) ")
-	cp.SetBorderColor(tcell.ColorYellow)
+	cp.SetBorderColor(app.Styles.SecondaryTextColor)
 
 	// Input field for search
 	cp.InputField = tview.NewInputField()
 	cp.InputField.SetLabel("> ")
 	cp.InputField.SetFieldWidth(0)
 	cp.InputField.SetFieldBackgroundColor(app.Styles.InverseTextColor)
-	cp.InputField.SetLabelColor(tcell.ColorYellow)
+	cp.InputField.SetLabelColor(app.Styles.SecondaryTextColor)
 
 	// Command list
 	cp.List = tview.NewList()

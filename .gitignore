@@ -10,3 +10,8 @@ test.db
 # Ignore executables
 *.exe
 *.exe~
+sqlcmder
+
+# Ignore log files
+*.log
+debug.log

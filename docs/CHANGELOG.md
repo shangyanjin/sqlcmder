@@ -7,6 +7,95 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2025-10-22
+
+### Theme System Overhaul
+
+#### TrueColor Support
+- **Fixed tview input box display anomaly in Linux dark terminals**
+  - Replaced basic color constants (`tcell.ColorWhite`, `tcell.ColorBlack`) with TrueColor RGB values
+  - Implemented `tcell.NewRGBColor(r, g, b)` for direct 24-bit color specification
+  - Set environment variables to enable TrueColor: `TERM=xterm-256color`, `COLORTERM=truecolor`
+  - Eliminated terminal theme mapping issues that caused white-on-white text
+
+#### Multi-Theme System
+- **Added comprehensive theme system with 5 built-in themes**
+  - **Dark**: Soft whites and grays with reduced brightness for comfortable viewing
+  - **Light**: Muted blacks and light grays with lower contrast
+  - **Solarized Dark**: Ethan Schoonover's popular color scheme
+  - **Gruvbox Dark**: Retro groove color scheme with warm tones
+  - **Nord**: Arctic, north-bluish color palette
+  
+- **Theme configuration via `config.toml`**
+  - Added `theme` field to `[application]` section
+  - Supports runtime theme switching
+  - Default theme: `dark`
+
+#### Color Scheme Architecture
+- **Created `ColorScheme` struct in `models/constants.go`**
+  - 16 color fields covering all UI elements: text, borders, buttons, highlights, accents
+  - Dedicated colors for focused/unfocused states
+  - Specialized `SelectedTextColor` for table row selection with proper contrast
+  
+- **Unified color management**
+  - `ColorSchemes` map stores all predefined themes
+  - `ActiveColorScheme` tracks current theme
+  - `SetActiveColorScheme()` function for theme switching
+  - `GetColorScheme()` with fallback to dark theme
+
+#### Enhanced Theme System in `cmd/app/app.go`
+- **Extended `Theme` struct with custom color fields**
+  - `ButtonBackgroundColor`: Darker button backgrounds (F1, F2, F3, Esc)
+  - `UnfocusedBorderColor`: Lighter borders for inactive panels
+  - `UnfocusedTextColor`: Slightly dimmed text for inactive panels
+  - `UnfocusedAccentColor`: Unified gray for unfocused colored elements
+  - `SelectedTextColor`: High-contrast text on selected table rows
+  
+- **Refactored color initialization**
+  - New `initializeTheme()` function for centralized theme setup
+  - `ApplyTheme()` method loads theme from configuration
+  - Seamless integration with tview's theme system
+
+#### UI Component Color Consistency
+- **Unified unfocused state colors across all components**
+  - Database tree panel: borders, graphics, title, node text, filter label
+  - Table results: borders, title, data rows
+  - SQL editor: border, text style
+  - Filter inputs: labels, placeholder text, field text
+  - Menu components: tabbed panes, table menus
+  - Command palette and command line input
+  
+- **Improved focus state differentiation**
+  - Minimal difference between focused/unfocused states
+  - Consistent application of accent colors (yellow, green)
+  - Unified gray tones for all unfocused colored text
+  
+- **Optimized table row selection contrast**
+  - Yellow background with deep gray/dark text in dark themes
+  - Yellow background with white text in light theme
+  - Ensures readability while maintaining visual consistency
+
+#### Color Refinements
+- **Reduced excessive contrast in dark/light themes**
+  - Dark: Softened whites to RGB(220,220,220), input backgrounds to RGB(45,45,48)
+  - Light: Muted blacks to RGB(50,50,50), highlights to RGB(70,130,200)
+  - Gentle borders and accents for comfortable long-term viewing
+  
+- **Button styling improvements**
+  - Darker backgrounds for F1/F2/F3/Esc shortcut buttons
+  - Better visual separation from surrounding elements
+  
+- **Placeholder text consistency**
+  - Unfocused: `UnfocusedTextColor` for all input placeholders
+  - Focused: `PrimaryTextColor` for clear visibility
+
+### Technical Benefits
+- **Eliminated terminal color mapping issues**: Direct RGB control prevents theme conflicts
+- **Enhanced accessibility**: Multiple themes support different viewing preferences and environments
+- **Improved visual comfort**: Reduced contrast prevents eye strain during extended use
+- **Consistent color semantics**: Unified approach to focused/unfocused states across all UI components
+- **Maintainable architecture**: Centralized color management simplifies future theme additions
+
 ## [0.3.2] - 2025-10-22
 
 ### Data Layer Reorganization

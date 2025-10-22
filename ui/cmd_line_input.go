@@ -7,9 +7,9 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
 	"sqlcmder/logger"
-	"sqlcmder/cli"
 )
 
 // CommandLine is a 2-row command line with message display and input
@@ -38,7 +38,7 @@ func NewCommandLine() *CommandLine {
 	inputField.SetLabel("SQL# ")
 	inputField.SetFieldWidth(0)
 	inputField.SetFieldBackgroundColor(app.Styles.PrimitiveBackgroundColor)
-	inputField.SetLabelColor(tcell.ColorYellow)
+	inputField.SetLabelColor(app.Styles.SecondaryTextColor)
 	inputField.SetFieldTextColor(app.Styles.PrimaryTextColor)
 
 	// Container
@@ -537,7 +537,7 @@ func (cl *CommandLine) showHelpModal(content string) {
 	textView.SetTitle(" Help - Press Esc to close ")
 	textView.SetTitleAlign(tview.AlignCenter)
 	textView.SetBackgroundColor(app.Styles.PrimitiveBackgroundColor)
-	textView.SetBorderColor(app.Styles.InverseTextColor)
+	textView.SetBorderColor(app.Styles.UnfocusedBorderColor)
 
 	// Handle Esc to close
 	textView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {

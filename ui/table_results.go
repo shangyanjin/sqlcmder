@@ -8,13 +8,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/rivo/tview"
 
+	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
-	"sqlcmder/keymap"
-	"sqlcmder/cli"
-	"sqlcmder/drivers"
-	"sqlcmder/logger"
-	"sqlcmder/helpers"
 	"sqlcmder/data/history"
+	"sqlcmder/drivers"
+	"sqlcmder/helpers"
+	"sqlcmder/keymap"
+	"sqlcmder/logger"
 	"sqlcmder/models"
 )
 
@@ -558,10 +558,10 @@ func (table *ResultsTable) UpdateRowsColor(headerColor tcell.Color, rowColor tce
 }
 
 func (table *ResultsTable) RemoveHighlightTable() {
-	table.SetBorderColor(app.Styles.InverseTextColor)
-	table.SetBordersColor(app.Styles.InverseTextColor)
-	table.SetTitleColor(app.Styles.InverseTextColor)
-	table.UpdateRowsColor(app.Styles.InverseTextColor, tview.Styles.InverseTextColor)
+	table.SetBorderColor(app.Styles.UnfocusedBorderColor)
+	table.SetBordersColor(app.Styles.UnfocusedBorderColor)
+	table.SetTitleColor(app.Styles.UnfocusedTextColor)
+	table.UpdateRowsColor(app.Styles.UnfocusedTextColor, app.Styles.UnfocusedTextColor)
 }
 
 func (table *ResultsTable) RemoveHighlightAll() {

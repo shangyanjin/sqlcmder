@@ -5,6 +5,7 @@ DefaultPageSize = 300
 DisableSidebar = false
 SidebarOverlay = false
 MaxQueryHistoryPerConnection = 100
+theme = "dark"  # Available: dark, light, solarized, gruvbox, nord
 
 [[database]]
 Name = 'support'

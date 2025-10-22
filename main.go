@@ -20,6 +20,10 @@ import (
 var version = "dev"
 
 func main() {
+	// Enable TrueColor support to avoid terminal theme mapping issues
+	os.Setenv("TERM", "xterm-256color")
+	os.Setenv("COLORTERM", "truecolor")
+
 	defaultConfigPath, err := config.DefaultConfigFile()
 	if err != nil {
 		log.Fatalf("Error getting default config file: %v", err)
@@ -72,6 +76,9 @@ func main() {
 	if err = config.LoadConfig(*configFile, app.App.GetConfig()); err != nil {
 		log.Fatalf("Error loading config: %v", err)
 	}
+
+	// Apply theme from configuration
+	app.App.ApplyTheme()
 
 	// Now we can initialize the main pages.
 	mainPages := ui.MainPages()

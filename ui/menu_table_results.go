@@ -90,10 +90,10 @@ func (menu *ResultsTableMenu) SetSelectedOption(option int) {
 }
 
 func (menu *ResultsTableMenu) SetBlur() {
-	menu.SetBorderColor(app.Styles.InverseTextColor)
+	menu.SetBorderColor(app.Styles.UnfocusedBorderColor)
 
 	for _, item := range menu.MenuItems {
-		item.SetTextColor(app.Styles.InverseTextColor)
+		item.SetTextColor(app.Styles.UnfocusedTextColor)
 	}
 }
 

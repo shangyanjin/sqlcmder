@@ -8,9 +8,9 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
 	"sqlcmder/keymap"
-	"sqlcmder/cli"
 	"sqlcmder/logger"
 	"sqlcmder/models"
 )
@@ -95,8 +95,8 @@ func (s *SQLEditor) Highlight() {
 }
 
 func (s *SQLEditor) SetBlur() {
-	s.SetBorderColor(app.Styles.InverseTextColor)
-	s.SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.InverseTextColor))
+	s.SetBorderColor(app.Styles.UnfocusedBorderColor)
+	s.SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.UnfocusedTextColor))
 }
 
 // openExternalEditor opens the user's preferred editor to edit the query.

@@ -11,10 +11,10 @@ import (
 	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/rivo/tview"
 
+	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
-	"sqlcmder/keymap"
-	"sqlcmder/cli"
 	"sqlcmder/drivers"
+	"sqlcmder/keymap"
 	"sqlcmder/logger"
 	"sqlcmder/models"
 )
@@ -213,11 +213,11 @@ func NewTree(dbName string, dbdriver drivers.Driver) *Tree {
 	})
 
 	tree.Filter.SetFieldStyle(tcell.StyleDefault.Background(app.Styles.PrimitiveBackgroundColor).Foreground(tview.Styles.PrimaryTextColor))
-	tree.Filter.SetPlaceholderStyle(tcell.StyleDefault.Background(app.Styles.PrimitiveBackgroundColor).Foreground(tview.Styles.InverseTextColor))
+	tree.Filter.SetPlaceholderStyle(tcell.StyleDefault.Background(app.Styles.PrimitiveBackgroundColor).Foreground(app.Styles.UnfocusedTextColor))
 	tree.Filter.SetBorderPadding(0, 0, 0, 0)
 	tree.Filter.SetBorderColor(app.Styles.PrimaryTextColor)
 	tree.Filter.SetLabel("Search: ")
-	tree.Filter.SetLabelColor(app.Styles.InverseTextColor)
+	tree.Filter.SetLabelColor(app.Styles.UnfocusedAccentColor)
 
 	tree.Filter.SetFocusFunc(func() {
 		tree.Filter.SetLabelColor(app.Styles.TertiaryTextColor)
@@ -226,11 +226,11 @@ func NewTree(dbName string, dbdriver drivers.Driver) *Tree {
 
 	tree.Filter.SetBlurFunc(func() {
 		if tree.Filter.GetText() == "" {
-			tree.Filter.SetLabelColor(app.Styles.InverseTextColor)
+			tree.Filter.SetLabelColor(app.Styles.UnfocusedAccentColor)
 		} else {
-			tree.Filter.SetLabelColor(app.Styles.TertiaryTextColor)
+			tree.Filter.SetLabelColor(app.Styles.UnfocusedAccentColor)
 		}
-		tree.Filter.SetFieldTextColor(app.Styles.InverseTextColor)
+		tree.Filter.SetFieldTextColor(app.Styles.UnfocusedTextColor)
 	})
 
 	tree.FoundNodeCountInput.SetFieldStyle(tcell.StyleDefault.Background(app.Styles.PrimitiveBackgroundColor).Foreground(tview.Styles.PrimaryTextColor))
@@ -399,9 +399,9 @@ func (tree *Tree) SetIsFiltering(isFiltering bool) {
 
 // Blur func
 func (tree *Tree) RemoveHighlight() {
-	tree.SetBorderColor(app.Styles.InverseTextColor)
-	tree.SetGraphicsColor(app.Styles.InverseTextColor)
-	tree.SetTitleColor(app.Styles.InverseTextColor)
+	tree.SetBorderColor(app.Styles.UnfocusedBorderColor)
+	tree.SetGraphicsColor(app.Styles.UnfocusedBorderColor)
+	tree.SetTitleColor(app.Styles.UnfocusedTextColor)
 	// tree.GetRoot().SetColor(app.Styles.InverseTextColor)
 
 	childrens := tree.GetRoot().GetChildren()
@@ -412,7 +412,7 @@ func (tree *Tree) RemoveHighlight() {
 		childrenIsCurrentNode := children.GetReference() == tree.GetCurrentNode().GetReference()
 
 		if !childrenIsCurrentNode && currentColor == app.Styles.PrimaryTextColor {
-			children.SetColor(app.Styles.InverseTextColor)
+			children.SetColor(app.Styles.UnfocusedTextColor)
 		}
 
 		childrenOfChildren := children.GetChildren()
@@ -423,7 +423,7 @@ func (tree *Tree) RemoveHighlight() {
 			childrenIsCurrentNode := children.GetReference() == tree.GetCurrentNode().GetReference()
 
 			if !childrenIsCurrentNode && currentColor == app.Styles.PrimaryTextColor {
-				children.SetColor(app.Styles.InverseTextColor)
+				children.SetColor(app.Styles.UnfocusedTextColor)
 			}
 
 		}
@@ -432,21 +432,21 @@ func (tree *Tree) RemoveHighlight() {
 }
 
 func (tree *Tree) ForceRemoveHighlight() {
-	tree.SetBorderColor(app.Styles.InverseTextColor)
-	tree.SetGraphicsColor(app.Styles.InverseTextColor)
-	tree.SetTitleColor(app.Styles.InverseTextColor)
-	tree.GetRoot().SetColor(app.Styles.InverseTextColor)
+	tree.SetBorderColor(app.Styles.UnfocusedBorderColor)
+	tree.SetGraphicsColor(app.Styles.UnfocusedBorderColor)
+	tree.SetTitleColor(app.Styles.UnfocusedTextColor)
+	tree.GetRoot().SetColor(app.Styles.UnfocusedTextColor)
 
 	childrens := tree.GetRoot().GetChildren()
 
 	for _, children := range childrens {
 
-		children.SetColor(app.Styles.InverseTextColor)
+		children.SetColor(app.Styles.UnfocusedTextColor)
 
 		childrenOfChildren := children.GetChildren()
 
 		for _, children := range childrenOfChildren {
-			children.SetColor(app.Styles.InverseTextColor)
+			children.SetColor(app.Styles.UnfocusedTextColor)
 		}
 
 	}

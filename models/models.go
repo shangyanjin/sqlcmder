@@ -11,6 +11,7 @@ type AppConfig struct {
 	DisableSidebar               bool
 	SidebarOverlay               bool
 	MaxQueryHistoryPerConnection int
+	Theme                        string `toml:"theme"` // Color theme: dark, light, solarized, gruvbox, nord
 }
 
 type Connection struct {

@@ -82,29 +82,29 @@ func (filter *ResultsTableFilter) GetCurrentFilter() string {
 
 // Function to blur
 func (filter *ResultsTableFilter) RemoveHighlight() {
-	filter.SetBorderColor(app.Styles.InverseTextColor)
-	filter.Label.SetTextColor(app.Styles.InverseTextColor)
-	filter.Input.SetPlaceholderTextColor(app.Styles.InverseTextColor)
-	filter.Input.SetFieldTextColor(app.Styles.InverseTextColor)
+	filter.SetBorderColor(app.Styles.UnfocusedBorderColor)
+	filter.Label.SetTextColor(app.Styles.UnfocusedAccentColor)
+	filter.Input.SetPlaceholderTextColor(app.Styles.UnfocusedTextColor)
+	filter.Input.SetFieldTextColor(app.Styles.UnfocusedTextColor)
 }
 
 func (filter *ResultsTableFilter) RemoveLocalHighlight() {
-	filter.SetBorderColor(tcell.ColorWhite)
-	filter.Label.SetTextColor(app.Styles.TertiaryTextColor)
-	filter.Input.SetPlaceholderTextColor(app.Styles.InverseTextColor)
-	filter.Input.SetFieldTextColor(app.Styles.InverseTextColor)
+	filter.SetBorderColor(app.Styles.UnfocusedBorderColor)
+	filter.Label.SetTextColor(app.Styles.UnfocusedAccentColor)
+	filter.Input.SetPlaceholderTextColor(app.Styles.UnfocusedTextColor)
+	filter.Input.SetFieldTextColor(app.Styles.UnfocusedTextColor)
 }
 
 func (filter *ResultsTableFilter) Highlight() {
-	filter.SetBorderColor(tcell.ColorWhite)
+	filter.SetBorderColor(app.Styles.PrimaryTextColor)
 	filter.Label.SetTextColor(app.Styles.TertiaryTextColor)
-	filter.Input.SetPlaceholderTextColor(tcell.ColorWhite)
+	filter.Input.SetPlaceholderTextColor(app.Styles.PrimaryTextColor)
 	filter.Input.SetFieldTextColor(app.Styles.PrimaryTextColor)
 }
 
 func (filter *ResultsTableFilter) HighlightLocal() {
 	filter.SetBorderColor(app.Styles.PrimaryTextColor)
 	filter.Label.SetTextColor(app.Styles.TertiaryTextColor)
-	filter.Input.SetPlaceholderTextColor(tcell.ColorWhite)
+	filter.Input.SetPlaceholderTextColor(app.Styles.PrimaryTextColor)
 	filter.Input.SetFieldTextColor(app.Styles.PrimaryTextColor)
 }

@@ -276,7 +276,7 @@ func (t *TabbedPane) SetBlur() {
 	tab := t.state.FirstTab
 
 	for i := 0; tab != nil && i < t.state.Length; i++ {
-		tab.Header.SetTextColor(app.Styles.InverseTextColor)
+		tab.Header.SetTextColor(app.Styles.UnfocusedTextColor)
 		tab = tab.NextTab
 	}
 }
