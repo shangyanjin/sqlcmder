@@ -10,7 +10,7 @@ test.db
 # Ignore executables
 *.exe
 *.exe~
-sqlcmder
+/sqlcmder
 
 # Ignore log files
 *.log
