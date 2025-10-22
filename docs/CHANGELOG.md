@@ -82,6 +82,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - No breaking changes to functionality
 - Improved code organization and maintainability
 
+#### Package Consolidation
+- **Merged internal/lib into internal/helpers**
+  - Moved clipboard functionality from `internal/lib/clipboard.go` to `internal/helpers/clipboard.go`
+  - Updated package declaration: `package lib` → `package helpers`
+  - Updated all 6 UI component imports and usage: `lib.NewClipboard()` → `helpers.NewClipboard()`
+  - Removed empty `internal/lib/` directory
+  - Reduced package fragmentation: 8 packages → 7 packages
+  - Consolidated utility functions for better organization
+
 ### Added
 - **VI-Style Command Line (CMDER)** - Major new feature
   - Built-in command interpreter accessible via `Ctrl+\` or typing `:`
