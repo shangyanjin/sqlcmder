@@ -21,14 +21,14 @@ func InitFromArg(connectionString string) error {
 	}
 
 	connection := models.Connection{
-		Name:     "",
-		Provider: parsed.Driver,
-		DBName:   DBName,
-		URL:      connectionString,
+		Name:   "",
+		Driver: parsed.Driver,
+		DBName: DBName,
+		DSN:    connectionString,
 	}
 
 	var newDBDriver drivers.Driver
-	switch connection.Provider {
+	switch connection.Driver {
 	case drivers.DriverMySQL:
 		newDBDriver = &drivers.MySQL{}
 	case drivers.DriverPostgres:
@@ -38,14 +38,14 @@ func InitFromArg(connectionString string) error {
 	case drivers.DriverMSSQL:
 		newDBDriver = &drivers.MSSQL{}
 	default:
-		return fmt.Errorf("could not handle database driver %s", connection.Provider)
+		return fmt.Errorf("could not handle database driver %s", connection.Driver)
 	}
 
-	err = newDBDriver.Connect(connection.URL)
+	err = newDBDriver.Connect(connection.DSN)
 	if err != nil {
 		return fmt.Errorf("could not connect to database %s: %s", connectionString, err)
 	}
-	mainPages.AddAndSwitchToPage(connection.URL, NewHomePage(connection, newDBDriver).Flex, true)
+	mainPages.AddAndSwitchToPage(connection.DSN, NewHomePage(connection, newDBDriver).Flex, true)
 
 	return nil
 }

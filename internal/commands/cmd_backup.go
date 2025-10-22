@@ -22,7 +22,7 @@ func BackupDatabase(filename string, ctx Context, onSuccess func(string), onErro
 	}
 
 	conn := ctx.ConnectionModel
-	provider := strings.ToLower(conn.Provider)
+	provider := strings.ToLower(conn.Driver)
 	dbName := ctx.CurrentDatabase
 	if dbName == "" {
 		dbName = conn.DBName
@@ -56,7 +56,7 @@ func ImportDatabase(filename string, ctx Context, onSuccess func(string), onErro
 	}
 
 	conn := ctx.ConnectionModel
-	provider := strings.ToLower(conn.Provider)
+	provider := strings.ToLower(conn.Driver)
 	dbName := ctx.CurrentDatabase
 	if dbName == "" {
 		dbName = conn.DBName

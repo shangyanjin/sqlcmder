@@ -99,7 +99,7 @@ func NewConnectionSelection(connectionForm *ConnectionForm, connectionPages *mod
 			case commands.EditConnection:
 				connectionPages.SwitchToPage(pageNameConnectionForm)
 				connectionForm.NameField.SetText(selectedConnection.Name)
-				connectionForm.DSNField.SetText(selectedConnection.URL)
+				connectionForm.DSNField.SetText(selectedConnection.DSN)
 				connectionForm.StatusText.SetText("")
 
 				connectionForm.SetAction(actionEditConnection)
@@ -168,7 +168,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 		variables := map[string]string{}
 
 		// Avoid getting the port when it's not requested.
-		waitsForPort := strings.Contains(connection.URL, "${port}")
+		waitsForPort := strings.Contains(connection.DSN, "${port}")
 		waitsForPort = waitsForPort || slices.ContainsFunc(connection.Commands, func(command *models.Command) bool {
 			return command.WaitForPort != ""
 		})
@@ -230,7 +230,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 			if variable == "" || value == "" {
 				continue
 			}
-			connection.URL = strings.ReplaceAll(connection.URL, "${"+variable+"}", value)
+			connection.DSN = strings.ReplaceAll(connection.DSN, "${"+variable+"}", value)
 		}
 	}
 
@@ -239,7 +239,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 
 	var newDBDriver drivers.Driver
 
-	switch connection.Provider {
+	switch connection.Driver {
 	case drivers.DriverMySQL:
 		newDBDriver = &drivers.MySQL{}
 	case drivers.DriverPostgres:
@@ -250,7 +250,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 		newDBDriver = &drivers.MSSQL{}
 	}
 
-	err := newDBDriver.Connect(connection.URL)
+	err := newDBDriver.Connect(connection.DSN)
 	if err != nil {
 		cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
 		return App.Draw()

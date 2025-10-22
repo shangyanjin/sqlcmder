@@ -293,13 +293,13 @@ func (form *ConnectionForm) inputCapture(connectionPages *models.ConnectionPages
 
 			parsedDatabaseData := models.Connection{
 				Name:     connectionName,
-				Provider: dbType,
+				Driver:   dbType,
 				Hostname: hostname,
 				Port:     port,
 				Username: username,
 				Password: password,
 				DBName:   database,
-				URL:      connectionString,
+				DSN:      connectionString,
 			}
 
 			switch form.Action {
@@ -323,7 +323,7 @@ func (form *ConnectionForm) inputCapture(connectionPages *models.ConnectionPages
 						newDatabases[i] = parsedDatabaseData
 
 						// newDatabases[i].Name = connectionName
-						// newDatabases[i].Provider = database.Provider
+						// newDatabases[i].Driver = database.Driver
 						// newDatabases[i].User = parsed.User.Username()
 						// newDatabases[i].Password, _ = parsed.User.Password()
 						// newDatabases[i].Host = parsed.Hostname()

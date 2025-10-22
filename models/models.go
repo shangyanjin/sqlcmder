@@ -17,16 +17,16 @@ type Connection struct {
 	Name string
 
 	// either use this directly
-	URL string
+	DSN string // Data Source Name (connection string)
 
 	// or parse manually
-	Provider  string
+	Driver    string // Database driver (mysql, postgres, sqlite, mssql)
 	Username  string
 	Password  string
 	Hostname  string
 	Port      string
 	DBName    string
-	URLParams string
+	DSNParams string // DSN parameters/query string
 
 	Commands []*Command
 }

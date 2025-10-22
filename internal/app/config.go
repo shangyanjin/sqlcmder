@@ -64,7 +64,7 @@ func LoadConfig(configFile string) error {
 	}
 
 	for i, conn := range App.config.Connections {
-		App.config.Connections[i].URL = parseConfigURL(&conn)
+		App.config.Connections[i].DSN = parseConfigDSN(&conn)
 	}
 
 	return nil
@@ -86,17 +86,17 @@ func (c *Config) SaveConnections(connections []models.Connection) error {
 	return toml.NewEncoder(file).Encode(c)
 }
 
-// parseConfigURL automatically generates the URL from the connection struct
-// if the URL is empty. It is useful for handling usernames and passwords with
+// parseConfigDSN automatically generates the DSN from the connection struct
+// if the DSN is empty. It is useful for handling usernames and passwords with
 // special characters. NOTE: Only MSSQL is supported for now!
-func parseConfigURL(conn *models.Connection) string {
-	if conn.URL != "" {
-		return conn.URL
+func parseConfigDSN(conn *models.Connection) string {
+	if conn.DSN != "" {
+		return conn.DSN
 	}
 
 	// Only MSSQL is supported for now.
-	if conn.Provider != drivers.DriverMSSQL {
-		return conn.URL
+	if conn.Driver != drivers.DriverMSSQL {
+		return conn.DSN
 	}
 
 	user := url.QueryEscape(conn.Username)
@@ -104,12 +104,12 @@ func parseConfigURL(conn *models.Connection) string {
 
 	return fmt.Sprintf(
 		"%s://%s:%s@%s:%s?database=%s%s",
-		conn.Provider,
+		conn.Driver,
 		user,
 		pass,
 		conn.Hostname,
 		conn.Port,
 		conn.DBName,
-		conn.URLParams,
+		conn.DSNParams,
 	)
 }
