@@ -87,6 +87,11 @@ func (a *Application) SaveConnections(connections []models.Connection) error {
 	return a.config.SaveConnections(connections)
 }
 
+// GetConfigFilePath returns the configuration file path.
+func (a *Application) GetConfigFilePath() string {
+	return a.config.ConfigFile
+}
+
 // Register adds a task to the wait group and returns a
 // function that decrements the task count when called.
 //

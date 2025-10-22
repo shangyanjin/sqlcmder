@@ -1,0 +1,19 @@
+ConfigFile = 'D:\Github\sqlcmder\config.toml'
+
+[application]
+DefaultPageSize = 300
+DisableSidebar = false
+SidebarOverlay = false
+MaxQueryHistoryPerConnection = 100
+
+[[database]]
+Name = 'support'
+URL = 'postgres://postgres:postgres@localhost:5432/support?sslmode=disable'
+Provider = 'postgres'
+Username = 'postgres'
+Password = 'postgres'
+Hostname = 'localhost'
+Port = '5432'
+DBName = 'support'
+URLParams = ''
+Commands = []

@@ -90,8 +90,8 @@ func NewConnectionSelection(connectionForm *ConnectionForm, connectionPages *mod
 				go cs.Connect(selectedConnection)
 			case commands.EditConnection:
 				connectionPages.SwitchToPage(pageNameConnectionForm)
-				connectionForm.GetFormItemByLabel("Name").(*tview.InputField).SetText(selectedConnection.Name)
-				connectionForm.GetFormItemByLabel("URL").(*tview.InputField).SetText(selectedConnection.URL)
+				connectionForm.NameField.SetText(selectedConnection.Name)
+				connectionForm.DSNField.SetText(selectedConnection.URL)
 				connectionForm.StatusText.SetText("")
 
 				connectionForm.SetAction(actionEditConnection)
@@ -125,8 +125,15 @@ func NewConnectionSelection(connectionForm *ConnectionForm, connectionPages *mod
 		switch command {
 		case commands.NewConnection:
 			connectionForm.SetAction(actionNewConnection)
-			connectionForm.GetFormItemByLabel("Name").(*tview.InputField).SetText("")
-			connectionForm.GetFormItemByLabel("URL").(*tview.InputField).SetText("")
+			// Reset to PostgreSQL defaults
+			connectionForm.DbTypeField.SetText(drivers.DriverPostgres)
+			connectionForm.NameField.SetText("")
+			connectionForm.HostField.SetText("localhost")
+			connectionForm.PortField.SetText("5432")
+			connectionForm.UserField.SetText("postgres")
+			connectionForm.PassField.SetText("postgres")
+			connectionForm.DBNameField.SetText("")
+			connectionForm.DSNField.SetText("")
 			connectionForm.StatusText.SetText("")
 			connectionPages.SwitchToPage(pageNameConnectionForm)
 		case commands.Quit:
