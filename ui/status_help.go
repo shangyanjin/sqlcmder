@@ -3,8 +3,8 @@ package ui
 import (
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/keymap"
+	"sqlcmder/cmd/app"
+	"sqlcmder/keymap"
 )
 
 type HelpStatus struct {

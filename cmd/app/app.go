@@ -10,7 +10,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/config"
+	"sqlcmder/config"
 	"sqlcmder/models"
 )
 

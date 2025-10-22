@@ -9,12 +9,12 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/keymap"
-	"sqlcmder/internal/commands"
-	"sqlcmder/internal/drivers"
-	"sqlcmder/internal/helpers"
-	"sqlcmder/internal/logger"
+	"sqlcmder/cmd/app"
+	"sqlcmder/keymap"
+	"sqlcmder/cli"
+	"sqlcmder/drivers"
+	"sqlcmder/helpers"
+	"sqlcmder/logger"
 	"sqlcmder/models"
 )
 

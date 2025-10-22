@@ -7,9 +7,9 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/logger"
-	"sqlcmder/internal/commands"
+	"sqlcmder/cmd/app"
+	"sqlcmder/logger"
+	"sqlcmder/cli"
 )
 
 // CommandLine is a 2-row command line with message display and input

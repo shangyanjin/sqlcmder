@@ -6,12 +6,12 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/keymap"
-	"sqlcmder/internal/commands"
-	"sqlcmder/internal/logger"
-	"sqlcmder/internal/storage/saved"
-	"sqlcmder/internal/helpers"
+	commands "sqlcmder/cli"
+	"sqlcmder/cmd/app"
+	"sqlcmder/data/queries"
+	"sqlcmder/helpers"
+	"sqlcmder/keymap"
+	"sqlcmder/logger"
 	"sqlcmder/models"
 )
 
@@ -127,7 +127,7 @@ func (sqc *SavedQueriesComponent) handleDelete() {
 		confirmation.SetText("Are you sure you want to delete this query?")
 		confirmation.SetDoneFunc(func(_ int, buttonLabel string) {
 			if buttonLabel == "Yes" {
-				err := saved.DeleteSavedQuery(sqc.connectionIdentifier, selectedQuery.Name)
+				err := queries.DeleteSavedQuery(sqc.connectionIdentifier, selectedQuery.Name)
 				if err != nil {
 					// TODO: Show error
 					return
@@ -142,7 +142,7 @@ func (sqc *SavedQueriesComponent) handleDelete() {
 }
 
 func (sqc *SavedQueriesComponent) loadQueries() {
-	queries, err := saved.ReadSavedQueries(sqc.connectionIdentifier)
+	queries, err := queries.ReadSavedQueries(sqc.connectionIdentifier)
 	if err != nil {
 		// TODO: Show error
 		return

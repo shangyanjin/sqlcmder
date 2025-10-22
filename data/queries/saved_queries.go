@@ -1,4 +1,4 @@
-package saved
+package queries
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"sqlcmder/internal/config"
-	"sqlcmder/internal/logger"
+	"sqlcmder/config"
+	"sqlcmder/logger"
 	"sqlcmder/models"
 )
 

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"sqlcmder/internal/logger"
+	"sqlcmder/logger"
 	"sqlcmder/models"
 )
 

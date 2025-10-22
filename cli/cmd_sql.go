@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"sqlcmder/internal/logger"
+	"sqlcmder/logger"
 )
 
 // ExecuteSQL executes arbitrary SQL statement

@@ -3,8 +3,8 @@ package ui
 import (
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/logger"
+	"sqlcmder/cmd/app"
+	"sqlcmder/logger"
 )
 
 const (

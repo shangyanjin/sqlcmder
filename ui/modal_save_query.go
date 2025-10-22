@@ -4,8 +4,8 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/storage/saved"
+	"sqlcmder/cmd/app"
+	"sqlcmder/data/queries"
 )
 
 // SaveQueryModal is a modal for saving a query with a name.
@@ -74,7 +74,7 @@ func (sqm *SaveQueryModal) save() {
 		return
 	}
 
-	err := saved.SaveQuery(sqm.connectionIdentifier, name, sqm.query)
+	err := queries.SaveQuery(sqm.connectionIdentifier, name, sqm.query)
 	if err != nil {
 		// TODO: Show an error message
 		return

@@ -6,9 +6,9 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/commands"
-	"sqlcmder/internal/keymap"
+	"sqlcmder/cmd/app"
+	"sqlcmder/cli"
+	"sqlcmder/keymap"
 )
 
 type KeybindGroup struct {

@@ -10,10 +10,10 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/config"
-	"sqlcmder/internal/db"
-	"sqlcmder/internal/logger"
+	"sqlcmder/cmd/app"
+	"sqlcmder/config"
+	"sqlcmder/db"
+	"sqlcmder/logger"
 	"sqlcmder/ui"
 )
 

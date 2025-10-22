@@ -9,10 +9,10 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/commands"
-	"sqlcmder/internal/helpers"
-	"sqlcmder/internal/keymap"
-	"sqlcmder/internal/logger"
+	"sqlcmder/cli"
+	"sqlcmder/helpers"
+	"sqlcmder/keymap"
+	"sqlcmder/logger"
 )
 
 type JSONViewer struct {

@@ -4,9 +4,9 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/drivers"
-	"sqlcmder/internal/helpers"
+	"sqlcmder/cmd/app"
+	"sqlcmder/drivers"
+	"sqlcmder/helpers"
 	"sqlcmder/models"
 )
 

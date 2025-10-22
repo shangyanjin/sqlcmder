@@ -6,7 +6,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
+	"sqlcmder/cmd/app"
 )
 
 // RegisterDatabaseCommands registers all database-related commands

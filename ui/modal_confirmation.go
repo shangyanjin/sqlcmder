@@ -4,7 +4,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
+	"sqlcmder/cmd/app"
 )
 
 type ConfirmationModal struct {

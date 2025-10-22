@@ -8,13 +8,13 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/commands"
-	"sqlcmder/internal/drivers"
-	"sqlcmder/internal/keymap"
-	"sqlcmder/internal/logger"
+	"sqlcmder/cmd/app"
+	"sqlcmder/cli"
+	"sqlcmder/drivers"
+	"sqlcmder/keymap"
+	"sqlcmder/logger"
 	"sqlcmder/models"
-	"sqlcmder/internal/storage/history"
+	"sqlcmder/data/history"
 )
 
 type Home struct {

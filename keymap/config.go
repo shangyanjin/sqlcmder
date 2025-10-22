@@ -3,7 +3,7 @@ package keymap
 import (
 	"github.com/gdamore/tcell/v2"
 
-	cmd "sqlcmder/internal/commands"
+	cmd "sqlcmder/cli"
 )
 
 // KeymapSystem is the actual key mapping system.

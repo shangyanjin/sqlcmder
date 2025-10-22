@@ -7,12 +7,12 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/keymap"
-	"sqlcmder/internal/commands"
-	"sqlcmder/internal/logger"
-	"sqlcmder/internal/storage/history"
-	"sqlcmder/internal/helpers"
+	"sqlcmder/cmd/app"
+	"sqlcmder/keymap"
+	"sqlcmder/cli"
+	"sqlcmder/logger"
+	"sqlcmder/data/history"
+	"sqlcmder/helpers"
 	"sqlcmder/models"
 )
 

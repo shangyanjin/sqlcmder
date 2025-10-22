@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/config"
-	"sqlcmder/internal/logger"
+	"sqlcmder/cmd/app"
+	"sqlcmder/config"
+	"sqlcmder/logger"
 	"sqlcmder/models"
 )
 

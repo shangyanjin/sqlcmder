@@ -8,13 +8,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/rivo/tview"
 
-	"sqlcmder/internal/app"
-	"sqlcmder/internal/keymap"
-	"sqlcmder/internal/commands"
-	"sqlcmder/internal/drivers"
-	"sqlcmder/internal/logger"
-	"sqlcmder/internal/helpers"
-	"sqlcmder/internal/storage/history"
+	"sqlcmder/cmd/app"
+	"sqlcmder/keymap"
+	"sqlcmder/cli"
+	"sqlcmder/drivers"
+	"sqlcmder/logger"
+	"sqlcmder/helpers"
+	"sqlcmder/data/history"
 	"sqlcmder/models"
 )
 

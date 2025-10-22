@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2025-10-22
+
+### Data Layer Reorganization
+
+#### Storage Directory Restructuring
+- **Renamed `storage/` to `data/` for better semantic clarity**
+  - Improved directory naming to reflect data storage purpose
+  - Enhanced project structure readability and maintainability
+  - Aligned with common project organization conventions
+
+#### Query Management Optimization
+- **Renamed `saved/` subdirectory to `queries/`**
+  - More descriptive naming for saved query functionality
+  - Clearer separation between query storage and history tracking
+  - Updated package declaration: `package saved` → `package queries`
+
+#### Import Path Updates
+- **Updated all import references across the codebase**
+  - `sqlcmder/storage` → `sqlcmder/data`
+  - `sqlcmder/data/saved` → `sqlcmder/data/queries`
+  - Fixed package references in UI components (`saved.` → `queries.`)
+  - Maintained backward compatibility and functionality
+
+#### Directory Structure Enhancement
+- **Final data layer structure:**
+  ```
+  data/
+  ├── queries/        # Saved SQL queries management
+  └── history/        # Query execution history tracking
+  ```
+- **Benefits:**
+  - Clearer semantic meaning for data storage operations
+  - Better separation of concerns between query persistence and history
+  - Improved code maintainability and developer experience
+  - Enhanced project structure professional appearance
+
 ## [0.3.1] - 2025-10-22
 
 ### Documentation Enhancement
