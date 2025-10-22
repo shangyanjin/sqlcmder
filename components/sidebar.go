@@ -35,7 +35,9 @@ func NewSidebar(dbProvider string) *Sidebar {
 	frame := tview.NewFrame(flex)
 	frame.SetBackgroundColor(app.Styles.PrimitiveBackgroundColor)
 	frame.SetBorder(true)
-	frame.SetBorders(0, 0, 0, 0, 0, 0)
+	frame.SetBorderColor(app.Styles.InverseTextColor)
+	// Keep default borders, don't set to 0
+	// frame.SetBorders(0, 0, 0, 0, 0, 0)
 
 	sidebarState := &SidebarState{
 		currentFieldIndex: 0,
@@ -206,6 +208,22 @@ func (sidebar *Sidebar) EditTextCurrentField() {
 }
 
 func (sidebar *Sidebar) inputCapture(event *tcell.EventKey) *tcell.EventKey {
+	// Handle Tab and arrow keys directly
+	switch event.Key() {
+	case tcell.KeyTab:
+		sidebar.FocusNextField()
+		return nil
+	case tcell.KeyBacktab:
+		sidebar.FocusPreviousField()
+		return nil
+	case tcell.KeyDown:
+		sidebar.FocusNextField()
+		return nil
+	case tcell.KeyUp:
+		sidebar.FocusPreviousField()
+		return nil
+	}
+
 	command := app.Keymaps.Group(app.SidebarGroup).Resolve(event)
 
 	switch command {

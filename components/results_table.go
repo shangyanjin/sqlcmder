@@ -157,7 +157,7 @@ func (table *ResultsTable) WithFilter() *ResultsTable {
 		tableContainer.AddItem(filter, 3, 0, false)
 		tableContainer.AddItem(table, 0, 1, true)
 		tableContainer.AddItem(table.Pagination, 3, 0, false)
-		tableContainer.SetBorder(true)
+		// tableContainer.SetBorder(true)  // Remove border to save space
 
 		table.SidebarContainer.AddItem(tableContainer, 0, 4, true)
 
@@ -186,7 +186,7 @@ func (table *ResultsTable) WithEditor() *ResultsTable {
 	table.Wrapper.Clear()
 
 	table.Wrapper.AddItem(editor, 12, 0, true)
-	table.SetBorder(true)
+	// table.SetBorder(true)  // Remove border to save space
 
 	tableWrapper := tview.NewFlex().SetDirection(tview.FlexColumnCSS)
 	tableWrapper.AddItem(table, 0, 1, false)
@@ -194,7 +194,7 @@ func (table *ResultsTable) WithEditor() *ResultsTable {
 
 	resultsInfoWrapper := tview.NewFlex().SetDirection(tview.FlexColumnCSS)
 	resultsInfoText := tview.NewTextView()
-	resultsInfoText.SetBorder(true)
+	// resultsInfoText.SetBorder(true)  // Remove border to save space
 	resultsInfoText.SetBorderColor(app.Styles.PrimaryTextColor)
 	resultsInfoText.SetTextColor(app.Styles.PrimaryTextColor)
 	resultsInfoWrapper.AddItem(resultsInfoText, 3, 0, false)

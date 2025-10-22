@@ -23,7 +23,7 @@ type Pagination struct {
 func NewPagination() *Pagination {
 	wrapper := tview.NewFlex()
 	wrapper.SetBorderPadding(0, 0, 1, 1)
-	wrapper.SetBorder(true)
+	// wrapper.SetBorder(true)  // Remove border to save space
 
 	textView := tview.NewTextView()
 	textView.SetText(fmt.Sprintf("%s-%s of %s rows", "0", "0", "0"))

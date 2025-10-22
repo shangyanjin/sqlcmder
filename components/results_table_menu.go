@@ -36,7 +36,7 @@ func NewResultsTableMenu() *ResultsTableMenu {
 		state: state,
 	}
 
-	menu.SetBorder(true)
+	// menu.SetBorder(true)  // Remove border to save space
 
 	for i, item := range menuItems {
 		separator := " | "

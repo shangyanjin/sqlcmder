@@ -41,6 +41,9 @@ const (
 	pageNameQueryHistory     string = "QueryHistoryModal"
 	pageNameSaveQuery        string = "SaveQueryModal"
 	pageNameSavedQueryDelete string = "SavedQueryDeleteModal"
+
+	// Command Palette
+	pageNameCommandPalette string = "CommandPalette"
 )
 
 // Tabs

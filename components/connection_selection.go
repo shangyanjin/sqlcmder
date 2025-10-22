@@ -67,8 +67,16 @@ func NewConnectionSelection(connectionForm *ConnectionForm, connectionPages *mod
 	statusText := tview.NewTextView()
 	statusText.SetBorderPadding(1, 1, 0, 0)
 
+	// Hint text above buttons
+	hintText := tview.NewTextView()
+	hintText.SetText("  [yellow]Up/Down[white] Select  [yellow]Enter[white] Connect  [yellow]N[white]ew  [yellow]E[white]dit  [yellow]D[white]elete  [yellow]Q[white]uit")
+	hintText.SetDynamicColors(true)
+	hintText.SetTextAlign(tview.AlignCenter)
+	hintText.SetBackgroundColor(app.Styles.PrimitiveBackgroundColor)
+
 	wrapper.AddItem(NewConnectionsTable(), 0, 1, true)
 	wrapper.AddItem(statusText, 4, 0, false)
+	wrapper.AddItem(hintText, 1, 0, false) // Hint area (1 line)
 	wrapper.AddItem(buttonsWrapper, 3, 0, false)
 
 	cs := &ConnectionSelection{

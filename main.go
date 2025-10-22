@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/go-sql-driver/mysql"
 
@@ -32,10 +33,15 @@ func main() {
 		fmt.Fprintln(f, "Options:")
 		flag.PrintDefaults()
 	}
+	// Get executable directory for default log file
+	exePath, _ := os.Executable()
+	exeDir := filepath.Dir(exePath)
+	defaultLogFile := filepath.Join(exeDir, "sqlcmder.log")
+
 	configFile := flag.String("config", defaultConfigPath, "config file to use")
 	printVersion := flag.Bool("version", false, "Show version")
-	logLevel := flag.String("loglevel", "info", "Log level")
-	logFile := flag.String("logfile", "", "Log file")
+	logLevel := flag.String("loglevel", "debug", "Log level")
+	logFile := flag.String("logfile", defaultLogFile, "Log file")
 	flag.Parse()
 
 	if *printVersion {
@@ -49,10 +55,9 @@ func main() {
 	}
 	logger.SetLevel(slogLevel)
 
-	if *logFile != "" {
-		if err := logger.SetFile(*logFile); err != nil {
-			log.Fatalf("Error setting log file: %v", err)
-		}
+	// Always enable logging to file
+	if err := logger.SetFile(*logFile); err != nil {
+		log.Fatalf("Error setting log file: %v", err)
 	}
 
 	logger.Info("Starting SQLCmder...", nil)

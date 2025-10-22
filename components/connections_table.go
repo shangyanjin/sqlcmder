@@ -33,6 +33,11 @@ func NewConnectionsTable() *ConnectionsTable {
 	table.SetOffset(5, 0)
 	table.SetSelectedStyle(tcell.StyleDefault.Foreground(app.Styles.SecondaryTextColor).Background(tview.Styles.PrimitiveBackgroundColor))
 
+	// Set selection changed callback to update * marker
+	table.SetSelectionChangedFunc(func(row, column int) {
+		table.UpdateSelectionMarker(row)
+	})
+
 	wrapper.AddItem(table, 0, 1, true)
 	table.SetConnections(app.App.Connections())
 
@@ -43,7 +48,7 @@ func NewConnectionsTable() *ConnectionsTable {
 
 func (ct *ConnectionsTable) AddConnection(connection models.Connection) {
 	rowCount := ct.GetRowCount()
-	ct.SetCellSimple(rowCount, 0, connection.Name)
+	ct.SetCellSimple(rowCount, 0, "  "+connection.Name) // Reserve space for * marker
 	ct.connections = append(ct.connections, connection)
 }
 
@@ -65,10 +70,35 @@ func (ct *ConnectionsTable) SetConnections(connections []models.Connection) {
 	}
 
 	ct.Select(0, 0)
+
+	// Initialize selection marker for first row
+	if len(connections) > 0 {
+		ct.UpdateSelectionMarker(0)
+	}
+
 	App.ForceDraw()
 }
 
 func (ct *ConnectionsTable) SetError(err error) {
 	ct.error = err.Error()
 	ct.errorTextView.SetText(ct.error)
+}
+
+// UpdateSelectionMarker updates the * marker for the selected row
+func (ct *ConnectionsTable) UpdateSelectionMarker(selectedRow int) {
+	// Update all rows
+	for i := 0; i < ct.GetRowCount(); i++ {
+		if i >= len(ct.connections) {
+			break
+		}
+
+		cell := ct.GetCell(i, 0)
+		if i == selectedRow {
+			// Add * marker for selected row
+			cell.SetText("[yellow]*[white] " + ct.connections[i].Name)
+		} else {
+			// Remove * marker for other rows
+			cell.SetText("  " + ct.connections[i].Name)
+		}
+	}
 }

@@ -25,11 +25,16 @@ type Home struct {
 	HelpStatus           HelpStatus
 	HelpModal            *HelpModal
 	QueryHistoryModal    *QueryHistoryModal
+	CommandPalette       *CommandPalette
+	CommandLine          *CommandLine
+	CommandStatusBar     *tview.TextView
 	DBDriver             drivers.Driver
 	FocusedWrapper       string
 	ListOfDBChanges      []models.DBDMLChange
 	ConnectionIdentifier string
 	ConnectionURL        string
+	CurrentDatabase      string
+	CurrentTable         string
 }
 
 func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
@@ -79,17 +84,70 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 
 	home.QueryHistoryModal = qhm
 
+	// Initialize command palette
+	commandPalette := NewCommandPalette()
+	commandPalette.OnClose = func() {
+		mainPages.RemovePage(pageNameCommandPalette)
+		app.App.SetFocus(home.Tree)
+	}
+
+	ctx := CommandContext{
+		DB:              dbdriver,
+		CurrentDatabase: connection.DBName,
+		Connection:      connectionIdentifier,
+	}
+	commandPalette.SetContext(ctx)
+
+	// Register commands
+	RegisterDatabaseCommands(commandPalette)
+	RegisterTableCommands(commandPalette)
+
+	home.CommandPalette = commandPalette
+	home.CurrentDatabase = connection.DBName
+
+	// Create command line
+	commandLine := NewCommandLine()
+	commandLine.OnCommand = func(cmd string) {
+		ctx := CommandContext{
+			DB:              home.DBDriver,
+			CurrentDatabase: home.CurrentDatabase,
+			CurrentTable:    home.CurrentTable,
+			Connection:      home.ConnectionIdentifier,
+		}
+		commandLine.ExecuteCommand(cmd, ctx)
+	}
+	commandLine.OnCancel = func() {
+		logger.Debug("CommandLine OnCancel - refocus to table", nil)
+		// Just refocus back to table
+		tab := home.TabbedPane.GetCurrentTab()
+		if tab != nil {
+			table := tab.Content.(*ResultsTable)
+			app.App.SetFocus(table)
+		}
+	}
+	home.CommandLine = commandLine
+
+	// Create command status bar
+	commandStatusBar := tview.NewTextView()
+	commandStatusBar.SetDynamicColors(true)
+	commandStatusBar.SetText(" [yellow]Ctrl+Left/Right[white]: Switch Panel | [yellow]Ctrl+P/K[white]: Command Palette | [yellow]Ctrl+\\[white]: Command Line | [yellow]Ctrl+F[white]: Search | [yellow]?[white]: Help")
+	commandStatusBar.SetBackgroundColor(app.Styles.PrimitiveBackgroundColor)
+	commandStatusBar.SetTextColor(app.Styles.PrimaryTextColor)
+	home.CommandStatusBar = commandStatusBar
+
 	go home.subscribeToTreeChanges()
 
 	leftWrapper.SetBorderColor(app.Styles.InverseTextColor)
 	leftWrapper.AddItem(tree.Wrapper, 0, 1, true)
 
 	rightWrapper.SetBorderColor(app.Styles.InverseTextColor)
-	rightWrapper.SetBorder(true)
+	rightWrapper.SetBorder(true) // Overall border like left panel
 	rightWrapper.SetDirection(tview.FlexColumnCSS)
 	rightWrapper.SetInputCapture(home.rightWrapperInputCapture)
 	rightWrapper.AddItem(tabbedPane.HeaderContainer, 1, 0, false)
 	rightWrapper.AddItem(tabbedPane.Pages, 0, 1, false)
+	rightWrapper.AddItem(commandLine, 2, 0, false)      // Command line 2 rows, always visible
+	rightWrapper.AddItem(commandStatusBar, 1, 0, false) // Status bar always visible
 
 	maincontent.AddItem(leftWrapper, 30, 1, false)
 	maincontent.AddItem(rightWrapper, 0, 5, false)
@@ -119,6 +177,11 @@ func (home *Home) subscribeToTreeChanges() {
 		case eventTreeSelectedTable:
 			databaseName := home.Tree.GetSelectedDatabase()
 			tableName := stateChange.Value.(string)
+
+			// Update context for command palette
+			home.CurrentDatabase = databaseName
+			home.CurrentTable = tableName
+			home.UpdateCommandContext()
 
 			tabReference := fmt.Sprintf("%s.%s", databaseName, tableName)
 
@@ -164,6 +227,7 @@ func (home *Home) subscribeToTreeChanges() {
 }
 
 func (home *Home) focusRightWrapper() {
+	logger.Debug("Focus right wrapper", nil)
 	home.Tree.RemoveHighlight()
 
 	home.RightWrapper.SetBorderColor(app.Styles.PrimaryTextColor)
@@ -210,6 +274,7 @@ func (home *Home) focusTab(tab *Tab) {
 }
 
 func (home *Home) focusLeftWrapper() {
+	logger.Debug("Focus left wrapper", nil)
 	home.Tree.Highlight()
 
 	home.RightWrapper.SetBorderColor(app.Styles.InverseTextColor)
@@ -327,26 +392,135 @@ func (home *Home) homeInputCapture(event *tcell.EventKey) *tcell.EventKey {
 		table = tab.Content.(*ResultsTable)
 	}
 
+	// Log key events at debug level for Ctrl/Alt keys
+	if event.Modifiers()&tcell.ModCtrl != 0 || event.Modifiers()&tcell.ModAlt != 0 {
+		logger.Debug("Key event", map[string]any{
+			"key":          event.Key(),
+			"rune":         string(event.Rune()),
+			"runeCode":     int(event.Rune()),
+			"modifiers":    event.Modifiers(),
+			"focusWrapper": home.FocusedWrapper,
+			"isEditing":    table != nil && table.GetIsEditing(),
+			"isFiltering":  table != nil && table.GetIsFiltering(),
+		})
+	}
+
+	// Special logging for backslash-related keys
+	if event.Rune() == '\\' || event.Rune() == 28 || event.Key() == tcell.KeyCtrlBackslash {
+		logger.Debug("Backslash key detected", map[string]any{
+			"key":       event.Key(),
+			"rune":      string(event.Rune()),
+			"runeCode":  int(event.Rune()),
+			"modifiers": event.Modifiers(),
+		})
+	}
+
+	// Only handle Ctrl+Arrow when not editing/filtering
+	if table != nil && (table.GetIsEditing() || table.GetIsFiltering()) {
+		logger.Debug("Skip key handling - editing or filtering", nil)
+		return event
+	}
+
+	// Ctrl+Right: cycle focus right (tree → table → sidebar → tree)
+	if event.Key() == tcell.KeyRight && event.Modifiers()&tcell.ModCtrl != 0 {
+		logger.Debug("Ctrl+Right pressed", map[string]any{"focusWrapper": home.FocusedWrapper})
+		if home.FocusedWrapper == focusedWrapperLeft {
+			// From tree to table
+			home.focusRightWrapper()
+		} else if home.FocusedWrapper == focusedWrapperRight {
+			// From table to sidebar (if visible), otherwise to tree
+			if table != nil && table.GetShowSidebar() {
+				app.App.SetFocus(table.Sidebar)
+			} else {
+				home.focusLeftWrapper()
+			}
+		}
+		return nil
+	}
+
+	// Ctrl+Left: cycle focus left (tree ← table ← sidebar ← tree)
+	if event.Key() == tcell.KeyLeft && event.Modifiers()&tcell.ModCtrl != 0 {
+		// Check if sidebar has focus
+		hasSidebarFocus := false
+		if table != nil && table.GetShowSidebar() {
+			// Try to detect if sidebar has focus by checking current primitive
+			currentFocus := app.App.GetFocus()
+			if currentFocus == table.Sidebar {
+				hasSidebarFocus = true
+			}
+		}
+
+		if hasSidebarFocus {
+			// From sidebar to table
+			app.App.SetFocus(table)
+		} else if home.FocusedWrapper == focusedWrapperRight {
+			// From table to tree
+			home.focusLeftWrapper()
+		} else if home.FocusedWrapper == focusedWrapperLeft {
+			// From tree to sidebar (if visible), otherwise to table
+			if table != nil && table.GetShowSidebar() {
+				app.App.SetFocus(table.Sidebar)
+			} else {
+				home.focusRightWrapper()
+			}
+		}
+		return nil
+	}
+
+	// Ctrl+P or Ctrl+K to open command palette
+	if event.Key() == tcell.KeyCtrlP || event.Key() == tcell.KeyCtrlK {
+		if table == nil || (!table.GetIsEditing() && !table.GetIsFiltering()) {
+			logger.Debug("Opening command palette", nil)
+			home.ShowCommandPalette()
+			return nil
+		}
+	}
+
+	// Ctrl+\ to focus command line - SIMPLE FOCUS SWITCH
+	if event.Key() == tcell.KeyCtrlBackslash {
+		logger.Debug("Ctrl+\\ - Focus command line", nil)
+		if table == nil || (!table.GetIsEditing() && !table.GetIsFiltering()) {
+			// Clear and focus command line input field
+			home.CommandLine.SetText("")
+			app.App.SetFocus(home.CommandLine.InputField)
+			logger.Debug("Command line focused", nil)
+			return nil
+		}
+	}
+
 	command := app.Keymaps.Group(app.HomeGroup).Resolve(event)
 
+	if command != commands.Noop {
+		logger.Debug("Command resolved", map[string]any{
+			"command": command.String(),
+			"key":     event.Key(),
+		})
+	}
+
+	// Handle commands
 	switch command {
 	case commands.MoveLeft:
 		if table != nil && !table.GetIsEditing() && !table.GetIsFiltering() && home.FocusedWrapper == focusedWrapperRight {
 			home.focusLeftWrapper()
+			return nil
 		}
 	case commands.MoveRight:
 		if table != nil && !table.GetIsEditing() && !table.GetIsFiltering() && home.FocusedWrapper == focusedWrapperLeft {
 			home.focusRightWrapper()
+			return nil
 		}
 	case commands.SwitchToEditorView:
 		home.createOrFocusEditorTab()
+		return nil
 	case commands.SwitchToConnectionsView:
 		if (table != nil && !table.GetIsEditing() && !table.GetIsFiltering() && !table.GetIsLoading()) || table == nil {
 			mainPages.SwitchToPage(pageNameConnections)
+			return nil
 		}
 	case commands.Quit:
 		if tab == nil || (!table.GetIsEditing() && !table.GetIsFiltering()) {
 			app.App.Stop()
+			return nil
 		}
 	case commands.Save:
 		if (len(home.ListOfDBChanges) > 0) && !table.GetIsEditing() {
@@ -368,10 +542,12 @@ func (home *Home) homeInputCapture(event *tcell.EventKey) *tcell.EventKey {
 			})
 
 			mainPages.AddPage(pageNameDMLPreview, queryPreviewModal, true, true)
+			return nil
 		}
 	case commands.HelpPopup:
 		if table == nil || !table.GetIsEditing() {
 			mainPages.AddPage(pageNameHelp, home.HelpModal, true, true)
+			return nil
 		}
 	case commands.SearchGlobal:
 		if table != nil && !table.GetIsEditing() && !table.GetIsFiltering() && !table.GetIsLoading() && home.FocusedWrapper == focusedWrapperRight {
@@ -382,6 +558,7 @@ func (home *Home) homeInputCapture(event *tcell.EventKey) *tcell.EventKey {
 		home.Tree.ClearSearch()
 		app.App.SetFocus(home.Tree.Filter)
 		home.Tree.SetIsFiltering(true)
+		return nil
 	case commands.ToggleQueryHistory:
 		if mainPages.HasPage(pageNameQueryHistory) {
 			mainPages.SwitchToPage(pageNameQueryHistory)
@@ -413,4 +590,20 @@ func (home *Home) createOrFocusEditorTab() {
 	home.HelpStatus.SetStatusOnEditorView()
 	home.focusRightWrapper()
 	App.ForceDraw()
+}
+
+func (home *Home) UpdateCommandContext() {
+	ctx := CommandContext{
+		DB:              home.DBDriver,
+		CurrentDatabase: home.CurrentDatabase,
+		CurrentTable:    home.CurrentTable,
+		Connection:      home.ConnectionIdentifier,
+	}
+	home.CommandPalette.SetContext(ctx)
+}
+
+func (home *Home) ShowCommandPalette() {
+	home.UpdateCommandContext()
+	home.CommandPalette.Show()
+	mainPages.AddPage(pageNameCommandPalette, home.CommandPalette, true, true)
 }
