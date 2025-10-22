@@ -11,7 +11,7 @@ import (
 	"sqlcmder/internal/app"
 	"sqlcmder/internal/commands"
 	"sqlcmder/internal/drivers"
-	"sqlcmder/internal/helpers/logger"
+	"sqlcmder/internal/logger"
 	"sqlcmder/internal/lib"
 	"sqlcmder/internal/storage/history"
 	"sqlcmder/models"

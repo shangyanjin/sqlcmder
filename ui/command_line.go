@@ -8,7 +8,7 @@ import (
 	"github.com/rivo/tview"
 
 	"sqlcmder/internal/app"
-	"sqlcmder/internal/helpers/logger"
+	"sqlcmder/internal/logger"
 	"sqlcmder/internal/commands"
 )
 

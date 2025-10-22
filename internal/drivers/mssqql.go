@@ -12,7 +12,7 @@ import (
 	_ "github.com/microsoft/go-mssqldb"
 	"github.com/xo/dburl"
 
-	"sqlcmder/internal/helpers/logger"
+	"sqlcmder/internal/logger"
 	"sqlcmder/models"
 )
 

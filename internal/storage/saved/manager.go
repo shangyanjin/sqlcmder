@@ -10,7 +10,7 @@ import (
 	"github.com/BurntSushi/toml"
 
 	"sqlcmder/internal/app"
-	"sqlcmder/internal/helpers/logger"
+	"sqlcmder/internal/logger"
 	"sqlcmder/models"
 )
 

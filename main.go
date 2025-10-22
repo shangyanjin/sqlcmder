@@ -11,8 +11,9 @@ import (
 	"github.com/go-sql-driver/mysql"
 
 	"sqlcmder/internal/app"
+	"sqlcmder/internal/db"
+	"sqlcmder/internal/logger"
 	"sqlcmder/ui"
-	"sqlcmder/internal/helpers/logger"
 )
 
 var version = "dev"
@@ -82,10 +83,12 @@ func main() {
 		// Launch into the connection picker.
 	case 1:
 		// Set a connection from the command line.
-		err := ui.InitFromArg(args[0])
+		connection, driver, err := db.InitFromArg(args[0])
 		if err != nil {
 			log.Fatal(err)
 		}
+		// Initialize the home page with the connection
+		mainPages.AddAndSwitchToPage(connection.DSN, ui.NewHomePage(*connection, driver).Flex, true)
 	default:
 		log.Fatal("Only a single connection is allowed")
 	}

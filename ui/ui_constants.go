@@ -1,98 +1,79 @@
 package ui
 
 import (
-	"github.com/gdamore/tcell/v2"
-
 	"sqlcmder/internal/app"
+	"sqlcmder/models"
 )
 
 var App = app.App
 
-// Pages
+// Page name aliases from models package for backward compatibility
 const (
-	// General
-	pageNameHelp         string = "Help"
-	pageNameConfirmation string = "Confirmation"
-	pageNameConnections  string = "Connections"
-	pageNameDMLPreview   string = "DMLPreview"
-	pageNameErrorModal   string = "ErrorModal" // Added new page name
-
-	// Results table
-	pageNameTable                  string = "Table"
-	pageNameTableError             string = "TableError"
-	pageNameTableLoading           string = "TableLoading"
-	pageNameTableEditorTable       string = "TableEditorTable"
-	pageNameTableEditorResultsInfo string = "TableEditorResultsInfo"
-	pageNameTableEditCell          string = "TableEditCell"
-	pageNameQueryPreviewError      string = "QueryPreviewError"
-	pageNameJSONViewer                    = "json_viewer"
-
-	// Sidebar
-	pageNameSidebar string = "Sidebar"
-
-	// Connections
-	pageNameConnectionSelection string = "ConnectionSelection"
-	pageNameConnectionForm      string = "ConnectionForm"
-
-	// SetValueList
-	pageNameSetValue string = "SetValue"
-
-	// Query History
-	pageNameQueryHistory     string = "QueryHistoryModal"
-	pageNameSaveQuery        string = "SaveQueryModal"
-	pageNameSavedQueryDelete string = "SavedQueryDeleteModal"
-
-	// Command Palette
-	pageNameCommandPalette string = "CommandPalette"
+	pageNameHelp                   = models.PageNameHelp
+	pageNameConfirmation           = models.PageNameConfirmation
+	pageNameConnections            = models.PageNameConnections
+	pageNameDMLPreview             = models.PageNameDMLPreview
+	pageNameErrorModal             = models.PageNameErrorModal
+	pageNameTable                  = models.PageNameTable
+	pageNameTableError             = models.PageNameTableError
+	pageNameTableLoading           = models.PageNameTableLoading
+	pageNameTableEditorTable       = models.PageNameTableEditorTable
+	pageNameTableEditorResultsInfo = models.PageNameTableEditorResultsInfo
+	pageNameTableEditCell          = models.PageNameTableEditCell
+	pageNameQueryPreviewError      = models.PageNameQueryPreviewError
+	pageNameJSONViewer             = models.PageNameJSONViewer
+	pageNameSidebar                = models.PageNameSidebar
+	pageNameConnectionSelection    = models.PageNameConnectionSelection
+	pageNameConnectionForm         = models.PageNameConnectionForm
+	pageNameSetValue               = models.PageNameSetValue
+	pageNameQueryHistory           = models.PageNameQueryHistory
+	pageNameSaveQuery              = models.PageNameSaveQuery
+	pageNameSavedQueryDelete       = models.PageNameSavedQueryDelete
+	pageNameCommandPalette         = models.PageNameCommandPalette
 )
 
-// Tabs
+// Tab name aliases from models package
 const (
-	tabNameEditor string = "Editor"
-
-	savedQueryTabReference   string = "saved_queries"
-	queryHistoryTabReference string = "query_history"
+	tabNameEditor            = models.TabNameEditor
+	savedQueryTabReference   = models.SavedQueryTabReference
+	queryHistoryTabReference = models.QueryHistoryTabReference
 )
 
-// Events
+// Event name aliases from models package
 const (
-	eventSidebarEditing       string = "EditingSidebar"
-	eventSidebarUnfocusing    string = "UnfocusingSidebar"
-	eventSidebarToggling      string = "TogglingSidebar"
-	eventSidebarCommitEditing string = "CommitEditingSidebar"
-	eventSidebarError         string = "ErrorSidebar"
-
-	eventSQLEditorQuery  string = "Query"
-	eventSQLEditorEscape string = "Escape"
-
-	eventResultsTableFiltering string = "FilteringResultsTable"
-
-	eventTreeSelectedDatabase string = "SelectedDatabase"
-	eventTreeSelectedTable    string = "SelectedTable"
-	eventTreeIsFiltering      string = "IsFiltering"
+	eventSidebarEditing        = models.EventSidebarEditing
+	eventSidebarUnfocusing     = models.EventSidebarUnfocusing
+	eventSidebarToggling       = models.EventSidebarToggling
+	eventSidebarCommitEditing  = models.EventSidebarCommitEditing
+	eventSidebarError          = models.EventSidebarError
+	eventSQLEditorQuery        = models.EventSQLEditorQuery
+	eventSQLEditorEscape       = models.EventSQLEditorEscape
+	eventResultsTableFiltering = models.EventResultsTableFiltering
+	eventTreeSelectedDatabase  = models.EventTreeSelectedDatabase
+	eventTreeSelectedTable     = models.EventTreeSelectedTable
+	eventTreeIsFiltering       = models.EventTreeIsFiltering
 )
 
-// Results table menu items
+// Menu item aliases from models package
 const (
-	menuRecords     string = "Records"
-	menuColumns     string = "Columns"
-	menuConstraints string = "Constraints"
-	menuForeignKeys string = "Foreign Keys"
-	menuIndexes     string = "Indexes"
+	menuRecords     = models.MenuRecords
+	menuColumns     = models.MenuColumns
+	menuConstraints = models.MenuConstraints
+	menuForeignKeys = models.MenuForeignKeys
+	menuIndexes     = models.MenuIndexes
 )
 
-// Actions
+// Action aliases from models package
 const (
-	actionNewConnection  string = "NewConnection"
-	actionEditConnection string = "EditConnection"
+	actionNewConnection  = models.ActionNewConnection
+	actionEditConnection = models.ActionEditConnection
 )
 
-// Misc (until i find a better name)
+// Focus and color aliases from models package
 const (
-	focusedWrapperLeft  string = "left"
-	focusedWrapperRight string = "right"
-
-	colorTableChange = tcell.ColorOrange
-	colorTableInsert = tcell.ColorDarkGreen
-	colorTableDelete = tcell.ColorRed
+	focusedWrapperLeft  = models.FocusedWrapperLeft
+	focusedWrapperRight = models.FocusedWrapperRight
+	colorTableChange    = models.ColorTableChange
+	colorTableInsert    = models.ColorTableInsert
+	colorTableDelete    = models.ColorTableDelete
 )

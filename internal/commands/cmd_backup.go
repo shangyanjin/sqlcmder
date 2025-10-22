@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"sqlcmder/internal/helpers"
-	"sqlcmder/internal/helpers/logger"
+	"sqlcmder/internal/logger"
 	"sqlcmder/models"
 )
 

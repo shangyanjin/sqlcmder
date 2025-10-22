@@ -1,4 +1,4 @@
-package ui
+package db
 
 import (
 	"fmt"
@@ -9,10 +9,12 @@ import (
 	"sqlcmder/models"
 )
 
-func InitFromArg(connectionString string) error {
+// InitFromArg initializes a database connection from a connection string argument
+// Returns the connection, driver, and any error
+func InitFromArg(connectionString string) (*models.Connection, drivers.Driver, error) {
 	parsed, err := helpers.ParseConnectionString(connectionString)
 	if err != nil {
-		return fmt.Errorf("could not parse connection string: %s", err)
+		return nil, nil, fmt.Errorf("could not parse connection string: %s", err)
 	}
 	DBName := strings.Split(parsed.Normalize(",", "NULL", 0), ",")[3]
 
@@ -38,14 +40,13 @@ func InitFromArg(connectionString string) error {
 	case drivers.DriverMSSQL:
 		newDBDriver = &drivers.MSSQL{}
 	default:
-		return fmt.Errorf("could not handle database driver %s", connection.Driver)
+		return nil, nil, fmt.Errorf("could not handle database driver %s", connection.Driver)
 	}
 
 	err = newDBDriver.Connect(connection.DSN)
 	if err != nil {
-		return fmt.Errorf("could not connect to database %s: %s", connectionString, err)
+		return nil, nil, fmt.Errorf("could not connect to database %s: %s", connectionString, err)
 	}
-	mainPages.AddAndSwitchToPage(connection.DSN, NewHomePage(connection, newDBDriver).Flex, true)
 
-	return nil
+	return &connection, newDBDriver, nil
 }
