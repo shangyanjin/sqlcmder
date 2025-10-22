@@ -7,6 +7,81 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2025-10-22
+
+### Major Refactoring - Project Structure Reorganization
+
+#### Directory Structure
+- **Renamed `components/` to `ui/`**
+  - Better naming: explicitly indicates Terminal UI layer
+  - Updated all package declarations: `package components` → `package ui`
+  - Updated all import paths: `sqlcmder/components` → `sqlcmder/ui`
+  
+- **Unified command logic under `internal/commands/`**
+  - Adopted `cmd_` prefix naming convention for consistency
+  - `cmd_types.go` - Command enum types (moved from `commands/`)
+  - `cmd_context.go` - Command execution context
+  - `cmd_database.go` - Database command handlers
+  - `cmd_table.go` - Table command handlers
+  - `cmd_backup.go` - Backup/import functionality
+  - `cmd_sql.go` - SQL execution handler
+  - `cmd_utils.go` - Utility functions (e.g., Contains)
+  
+- **Reorganized storage layer under `internal/storage/`**
+  - `internal/storage/history/` - Query execution history (JSON)
+  - `internal/storage/saved/` - Saved query templates (TOML)
+  - Clear separation: storage vs business logic
+  
+- **Moved all core packages to `internal/`**
+  - `internal/app/` - Application core (from `app/`)
+  - `internal/keymap/` - Keyboard mappings (from `keymap/`)
+  - `internal/lib/` - Utilities (from `lib/`)
+  - `internal/helpers/` - Helper functions (from `helpers/`)
+  - `internal/drivers/` - Database drivers (from `drivers/`)
+  - Follows Go best practices: `internal/` packages not importable externally
+
+#### Model Field Renaming (Standard Database Terminology)
+- **Connection model fields:**
+  - `URL` → `DSN` (Data Source Name - industry standard)
+  - `URLParams` → `DSNParams` (DSN Parameters)
+  - `Provider` → `Driver` (Database Driver - more accurate)
+- **Config function renamed:**
+  - `parseConfigURL()` → `parseConfigDSN()`
+- **Benefits:**
+  - Standard database terminology throughout codebase
+  - Clearer, more professional naming
+  - Better code documentation
+
+#### Configuration Improvements
+- **Relative paths:** `ConfigFile` now uses `./config.toml` instead of absolute path
+  - Portable configuration across environments
+  - Works regardless of installation location
+  
+#### UI/UX Improvements
+- **Removed emojis and special characters** for better terminal compatibility
+  - `✗` → `ERROR:`
+  - `✓` → `OK:`
+  - `ℹ` → `INFO:`
+  - Sorting arrows → `ASC`/`DESC` text
+  - Pure ASCII characters work in all terminals
+  - No UTF-8 encoding issues
+  
+#### Code Quality
+- **Fixed circular dependencies:**
+  - Removed `helpers` import from `commands`
+  - Created `cmd_utils.go` with `Contains()` function
+- **Deleted duplicate code:**
+  - Removed `components/commands/database_commands.go` (duplicate)
+  - Consolidated command palette registrations
+- **Consistent naming conventions:**
+  - All command files use `cmd_` prefix
+  - Clear separation between UI and business logic
+  
+#### Build & Compilation
+- All changes compile successfully
+- No breaking changes to functionality
+- Improved code organization and maintainability
+
 ### Added
 - **VI-Style Command Line (CMDER)** - Major new feature
   - Built-in command interpreter accessible via `Ctrl+\` or typing `:`
