@@ -35,6 +35,7 @@ type Home struct {
 	ConnectionURL        string
 	CurrentDatabase      string
 	CurrentTable         string
+	Connection           models.Connection // Full connection details
 }
 
 func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
@@ -66,6 +67,7 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 		ListOfDBChanges:      []models.DBDMLChange{},
 		ConnectionIdentifier: connectionIdentifier,
 		ConnectionURL:        connection.URL,
+		Connection:           connection, // Store full connection
 	}
 
 	tabbedPane := NewTabbedPane()
@@ -95,6 +97,7 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 		DB:              dbdriver,
 		CurrentDatabase: connection.DBName,
 		Connection:      connectionIdentifier,
+		ConnectionModel: &connection,
 	}
 	commandPalette.SetContext(ctx)
 
@@ -113,6 +116,7 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 			CurrentDatabase: home.CurrentDatabase,
 			CurrentTable:    home.CurrentTable,
 			Connection:      home.ConnectionIdentifier,
+			ConnectionModel: &home.Connection,
 		}
 		commandLine.ExecuteCommand(cmd, ctx)
 	}
@@ -598,6 +602,7 @@ func (home *Home) UpdateCommandContext() {
 		CurrentDatabase: home.CurrentDatabase,
 		CurrentTable:    home.CurrentTable,
 		Connection:      home.ConnectionIdentifier,
+		ConnectionModel: &home.Connection,
 	}
 	home.CommandPalette.SetContext(ctx)
 }

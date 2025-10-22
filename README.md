@@ -2,14 +2,56 @@
 
 A cross-platform Terminal UI database management tool with built-in command line interface (CMDER), written in Go. Personally customized and enhanced based on LazySQL.
 
-![SQLCmder Screenshot](docs/screenshot.jpg)
+![SQLCmder Main Interface](docs/screenshot-main.jpg)
+
+## ⚠️ Disclaimer
+
+**THIS IS A BETA/TEST VERSION - NOT FOR PRODUCTION USE**
+
+- This software is provided "AS IS" without warranty of any kind
+- No guarantees of reliability, security, or data integrity
+- Use at your own risk - the author assumes no liability for any damages
+- Recommended for testing and development environments only
+- Always backup your data before use
+
+## Installation
+
+### Build from Source (Recommended)
+
+**Prerequisites:**
+- Go 1.19 or higher
+- Git
+
+**All Platforms (Windows / Linux / macOS):**
+
+```bash
+# Clone the repository
+git clone https://github.com/shangyanjin/sqlcmder.git
+cd sqlcmder
+
+# Build the application
+go build -o sqlcmder
+
+# Run the application
+./sqlcmder
+```
+
+**For Windows:**
+```powershell
+# Build for Windows
+go build -o sqlcmder.exe
+
+# Run
+.\sqlcmder.exe
+```
 
 ## Features
 
 ### VI-Style Command Line (CMDER)
 - Built-in command interpreter with `SQL#` prompt
-- Quick database operations: `db create/drop/use/list`
+- Quick database operations: `db create/drop/use/list/backup/import`
 - Quick table operations: `table create/drop/truncate/rename`
+- Database backup and import support (MySQL, PostgreSQL, SQLite, MSSQL)
 - Direct SQL execution
 - Command history navigation (Up/Down arrows)
 - Comprehensive help system: `help <topic>`
@@ -40,6 +82,8 @@ A cross-platform Terminal UI database management tool with built-in command line
 SQL# db list                    # List databases
 SQL# db use mydb                # Switch database
 SQL# SELECT * FROM users;       # Execute SQL
+SQL# db backup mydb_backup.sql  # Backup database
+SQL# db import mydb_backup.sql  # Import from backup
 SQL# help insert                # Get SQL syntax help
 ```
 
@@ -51,6 +95,34 @@ SQL# help insert                # Get SQL syntax help
 - `Ctrl+Left/Right` - Switch panels
 - `Up/Down` - Navigate history (in command line)
 - `?` or `help` - Show help
+
+## Backup & Import
+
+SQLCmder supports database backup and import operations:
+
+### Backup
+```bash
+SQL# db backup mydb_backup.sql
+```
+- Backups are saved to `./backup/` directory
+- MySQL/PostgreSQL require CLI tools (`mysqldump`, `pg_dump`)
+- SQLite uses direct file copy
+- MSSQL requires `sqlcmd` tool
+
+### Import
+```bash
+SQL# db import mydb_backup.sql
+```
+- Looks for files in current directory or `./backup/`
+- MySQL/PostgreSQL require CLI tools (`mysql`, `psql`)
+- SQLite executes SQL statements directly
+- MSSQL requires `sqlcmd` tool
+
+### Requirements
+- **MySQL**: Install MySQL client tools
+- **PostgreSQL**: Install PostgreSQL client tools
+- **SQLite**: Built-in support (no external tools needed)
+- **MSSQL**: Install SQL Server command-line tools
 
 ## Configuration
 

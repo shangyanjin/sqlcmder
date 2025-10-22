@@ -8,6 +8,7 @@ import (
 
 	"sqlcmder/app"
 	"sqlcmder/drivers"
+	"sqlcmder/models"
 )
 
 // CommandContext holds the current context for command execution
@@ -16,6 +17,7 @@ type CommandContext struct {
 	CurrentDatabase string
 	CurrentTable    string
 	Connection      string
+	ConnectionModel *models.Connection // Full connection details for backup/import
 }
 
 // Command represents a command in the palette

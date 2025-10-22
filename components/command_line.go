@@ -225,7 +225,7 @@ func (cl *CommandLine) ExecuteCommand(cmd string, ctx CommandContext) {
 
 func (cl *CommandLine) handleDatabaseCommand(args []string, ctx CommandContext) {
 	if len(args) == 0 {
-		ShowError("Usage: db <create|drop|use> <name>")
+		ShowError("Usage: db <create|drop|use|list|backup|import> <name>")
 		return
 	}
 
@@ -277,6 +277,20 @@ func (cl *CommandLine) handleDatabaseCommand(args []string, ctx CommandContext) 
 			return
 		}
 		ShowInfo("Databases:\n" + strings.Join(databases, "\n"))
+	case "backup", "b":
+		if len(args) < 2 {
+			ShowError("Usage: db backup <filename>")
+			return
+		}
+		filename := args[1]
+		cl.handleBackup(filename, ctx)
+	case "import", "i":
+		if len(args) < 2 {
+			ShowError("Usage: db import <filename>")
+			return
+		}
+		filename := args[1]
+		cl.handleImport(filename, ctx)
 	default:
 		ShowError("Unknown database command: " + action)
 	}
@@ -374,6 +388,8 @@ func (cl *CommandLine) showCommandHelp(args []string) {
   db drop <name>       - Drop database
   db use <name>        - Switch to database
   db list              - List all databases
+  db backup <file>     - Backup current database
+  db import <file>     - Import SQL from file
   Aliases: database, db
 
 [yellow]Table Commands:[white]
@@ -397,6 +413,7 @@ func (cl *CommandLine) showCommandHelp(args []string) {
 [yellow]Examples:[white]
   help insert          - Show INSERT syntax
   db create mydb       - Create database 'mydb'
+  db backup mydb.sql   - Backup to ./backup/mydb.sql
   table drop users     - Drop table 'users'
 
 [grey]Press Esc to close | Type command for details[white]`
@@ -527,16 +544,22 @@ func (cl *CommandLine) showDetailedHelp(topic string) {
   db drop <name>       - Drop database (permanent!)
   db use <name>        - Switch to database
   db list              - List all databases
+  db backup <file>     - Backup current database
+  db import <file>     - Import SQL from file
 
-[yellow]SQL Equivalent:[white]
-  CREATE DATABASE database_name;
-  DROP DATABASE database_name;
-  USE database_name;
-  SHOW DATABASES;
+[yellow]Backup/Import:[white]
+  - MySQL: Uses mysqldump/mysql (requires tools)
+  - PostgreSQL: Uses pg_dump/psql (requires tools)
+  - SQLite: Direct file copy
+  - MSSQL: Uses sqlcmd (requires tools)
+  - Files saved to ./backup/ directory
+  - Can use relative or absolute paths
 
 [yellow]Examples:[white]
   db create myapp_dev
   db use myapp_dev
+  db backup mydb_20231022.sql
+  db import mydb_backup.sql
   db list
 
 [grey]Press Esc to close[white]`
@@ -563,12 +586,77 @@ func (cl *CommandLine) showDetailedHelp(topic string) {
 
 [grey]Press Esc to close[white]`
 
+	case "backup":
+		help = `[yellow]Database Backup[white]
+
+[yellow]Command:[white]
+  db backup <filename>
+
+[yellow]Description:[white]
+  Backs up the current database to a file in the ./backup/ directory.
+  The backup method depends on your database type:
+
+[yellow]Database Types:[white]
+  MySQL        - Uses mysqldump (must be installed)
+  PostgreSQL   - Uses pg_dump (must be installed)
+  SQLite       - Direct file copy
+  MSSQL        - Uses sqlcmd (must be installed)
+
+[yellow]Notes:[white]
+  - Backups are saved to ./backup/ directory
+  - Directory is created automatically if needed
+  - For MySQL/PostgreSQL, ensure CLI tools are in PATH
+  - SQLite backups are file copies (reliable)
+  - MSSQL requires SQL Server access permissions
+
+[yellow]Examples:[white]
+  db backup mydb_20231022.sql
+  db backup production_backup.sql
+  db backup test.db.bak
+
+[grey]Press Esc to close[white]`
+
+	case "import":
+		help = `[yellow]Database Import[white]
+
+[yellow]Command:[white]
+  db import <filename>
+
+[yellow]Description:[white]
+  Imports SQL statements from a file into the current database.
+  The import method depends on your database type:
+
+[yellow]Database Types:[white]
+  MySQL        - Uses mysql client (must be installed)
+  PostgreSQL   - Uses psql (must be installed)
+  SQLite       - Executes SQL statements directly
+  MSSQL        - Uses sqlcmd (must be installed)
+
+[yellow]File Lookup:[white]
+  1. Checks current directory first
+  2. Then checks ./backup/ directory
+  3. Can use relative or absolute paths
+
+[yellow]Notes:[white]
+  - Ensure database exists before importing
+  - Large files may take time to process
+  - SQLite imports are executed statement by statement
+  - For MySQL/PostgreSQL, ensure CLI tools are in PATH
+  - Import refreshes the database tree
+
+[yellow]Examples:[white]
+  db import mydb_backup.sql
+  db import ./backup/production.sql
+  db import C:\backups\data.sql
+
+[grey]Press Esc to close[white]`
+
 	default:
 		help = fmt.Sprintf(`[yellow]Help Topic: %s[white]
 
 [red]Unknown topic.[white] Available topics:
   insert, update, delete, select
-  db, table
+  db, table, backup, import
 
 Type [yellow]help[white] to see all commands.
 Type [yellow]help <topic>[white] for specific help.
@@ -607,4 +695,72 @@ func (cl *CommandLine) showHelpModal(content string) {
 
 	// Show modal
 	ShowModal(textView, 80, 25)
+}
+
+// handleBackup performs database backup
+func (cl *CommandLine) handleBackup(filename string, ctx CommandContext) {
+	if ctx.ConnectionModel == nil {
+		ShowError("Connection information not available")
+		return
+	}
+
+	conn := ctx.ConnectionModel
+	provider := strings.ToLower(conn.Provider)
+	dbName := ctx.CurrentDatabase
+	if dbName == "" {
+		dbName = conn.DBName
+	}
+
+	logger.Info("Database backup", map[string]any{
+		"provider": provider,
+		"database": dbName,
+		"file":     filename,
+	})
+
+	switch provider {
+	case "mysql":
+		cl.backupMySQL(filename, dbName, conn)
+	case "postgres", "postgresql":
+		cl.backupPostgreSQL(filename, dbName, conn)
+	case "sqlite":
+		cl.backupSQLite(filename, dbName, conn)
+	case "mssql", "sqlserver":
+		cl.backupMSSQL(filename, dbName, conn)
+	default:
+		ShowError("Backup not supported for provider: " + provider)
+	}
+}
+
+// handleImport imports data from SQL file
+func (cl *CommandLine) handleImport(filename string, ctx CommandContext) {
+	if ctx.ConnectionModel == nil {
+		ShowError("Connection information not available")
+		return
+	}
+
+	conn := ctx.ConnectionModel
+	provider := strings.ToLower(conn.Provider)
+	dbName := ctx.CurrentDatabase
+	if dbName == "" {
+		dbName = conn.DBName
+	}
+
+	logger.Info("Database import", map[string]any{
+		"provider": provider,
+		"database": dbName,
+		"file":     filename,
+	})
+
+	switch provider {
+	case "mysql":
+		cl.importMySQL(filename, dbName, conn)
+	case "postgres", "postgresql":
+		cl.importPostgreSQL(filename, dbName, conn)
+	case "sqlite":
+		cl.importSQLite(filename, dbName, conn)
+	case "mssql", "sqlserver":
+		cl.importMSSQL(filename, dbName, conn)
+	default:
+		ShowError("Import not supported for provider: " + provider)
+	}
 }

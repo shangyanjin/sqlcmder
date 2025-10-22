@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `db drop <name>` - Drop database  
   - `db use <name>` - Switch database
   - `db list` - List all databases
+  - `db backup <file>` - Backup current database to ./backup/ directory
+  - `db import <file>` - Import SQL from backup file
 
 - **Table Quick Commands**
   - `table create <name>` - Create table (interactive)
@@ -28,9 +30,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `table truncate <name>` - Clear table data
   - `table rename <old> <new>` - Rename table
 
+- **Database Backup & Import**
+  - Cross-platform backup and restore functionality for all supported databases
+  - MySQL: Uses `mysqldump` and `mysql` client tools
+  - PostgreSQL: Uses `pg_dump` and `psql` client tools
+  - SQLite: Direct file copy (no external dependencies)
+  - MSSQL: Uses `sqlcmd` command-line tool
+  - Automatic backup directory creation (./backup/)
+  - Smart file lookup: checks current directory and ./backup/ automatically
+  - Full context help: `help backup` and `help import` for detailed documentation
+
 - **Comprehensive Help System**
   - Multiple help triggers: `help`, `?`, `/?`, `/help`
-  - Detailed syntax help: `help insert`, `help update`, `help delete`, `help select`, `help db`, `help table`
+  - Detailed syntax help: `help insert`, `help update`, `help delete`, `help select`, `help db`, `help table`, `help backup`, `help import`
   - Modal dialog with scrollable content showing SQL syntax, examples, and best practices
   - Context-aware command suggestions
 
@@ -49,6 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `.exe` and `.exe~` files in `.gitignore`
 
 ### Changed
+- README installation instructions: changed from binary downloads to git clone + build from source
+- Added prominent disclaimer: marked as BETA/TEST version with warnings about production use
 - Renamed project from LazySQL to SQLCmder throughout codebase
 - UI layout improvements for cleaner interface
   - Middle window has single overall border (similar to left panel)
