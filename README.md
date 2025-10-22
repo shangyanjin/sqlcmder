@@ -2,6 +2,8 @@
 
 A cross-platform Terminal UI database management tool with built-in command line interface (CMDER), written in Go. Personally customized and enhanced based on LazySQL.
 
+![SQLCmder Screenshot](docs/screenshot.jpg)
+
 ## Features
 
 ### VI-Style Command Line (CMDER)
