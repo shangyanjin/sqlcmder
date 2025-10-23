@@ -149,9 +149,11 @@ func (home *Home) subscribeToTreeChanges() {
 
 			if tab != nil {
 				table = tab.Content.(*ResultsTable)
+				table.SetConnection(&home.Connection)
 				home.TabbedPane.SwitchToTabByReference(tab.Reference)
 			} else {
 				table = NewResultsTable(&home.ListOfDBChanges, home.Tree, home.DBDriver, home.ConnectionIdentifier, home.ConnectionURL).WithFilter()
+				table.SetConnection(&home.Connection)
 				table.SetDatabaseName(databaseName)
 				table.SetTableName(tableName)
 
@@ -516,9 +518,11 @@ func (home *Home) createOrFocusEditorTab() {
 	if tab != nil {
 		home.TabbedPane.SwitchToTabByName(tabNameEditor)
 		table := tab.Content.(*ResultsTable)
+		table.SetConnection(&home.Connection)
 		table.SetIsFiltering(true)
 	} else {
 		tableWithEditor := NewResultsTable(&home.ListOfDBChanges, home.Tree, home.DBDriver, home.ConnectionIdentifier, home.ConnectionURL).WithEditor()
+		tableWithEditor.SetConnection(&home.Connection)
 		home.TabbedPane.AppendTab(tabNameEditor, tableWithEditor, tabNameEditor)
 		tableWithEditor.SetIsFiltering(true)
 		home.TabbedPane.GetCurrentTab()

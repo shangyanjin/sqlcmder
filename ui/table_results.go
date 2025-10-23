@@ -56,6 +56,7 @@ type ResultsTable struct {
 	DBDriver             drivers.Driver
 	connectionIdentifier string
 	ConnectionURL        string
+	Connection           *models.Connection
 }
 
 func NewResultsTable(listOfDBChanges *[]models.DBDMLChange, tree *Tree, dbdriver drivers.Driver, connectionIdentifier string, connectionURL string) *ResultsTable {
@@ -801,6 +802,10 @@ func (table *ResultsTable) GetColumnIndexByName(columnName string) int {
 
 func (table *ResultsTable) GetIsLoading() bool {
 	return table.state.isLoading
+}
+
+func (table *ResultsTable) SetConnection(conn *models.Connection) {
+	table.Connection = conn
 }
 
 func (table *ResultsTable) GetIsFiltering() bool {
@@ -1619,6 +1624,7 @@ func (table *ResultsTable) handleBackupCommand(filename string) {
 		DB:              table.Editor.DBDriver,
 		CurrentDatabase: currentDB,
 		Connection:      table.Editor.connectionIdentifier,
+		ConnectionModel: table.Connection,
 	}
 
 	// Execute backup
@@ -1669,6 +1675,7 @@ func (table *ResultsTable) handleImportCommand(filename string) {
 		DB:              table.Editor.DBDriver,
 		CurrentDatabase: currentDB,
 		Connection:      table.Editor.connectionIdentifier,
+		ConnectionModel: table.Connection,
 	}
 
 	// Execute import
