@@ -31,9 +31,12 @@ func NewResultsFilter() *ResultsTableFilter {
 	recordsFilter.Label.SetText("WHERE")
 	recordsFilter.Label.SetBorderPadding(0, 0, 0, 1)
 
+	// Set input field styling - unified background color for input and autocomplete dropdown
+	fieldBgColor := app.Styles.PrimitiveBackgroundColor
+
 	recordsFilter.Input.SetPlaceholder("  Press / to search")
-	recordsFilter.Input.SetPlaceholderStyle(tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(app.Styles.PrimitiveBackgroundColor))
-	recordsFilter.Input.SetFieldBackgroundColor(app.Styles.PrimitiveBackgroundColor)
+	recordsFilter.Input.SetPlaceholderStyle(tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(fieldBgColor))
+	recordsFilter.Input.SetFieldBackgroundColor(fieldBgColor)
 	recordsFilter.Input.SetFieldTextColor(app.Styles.PrimaryTextColor)
 	recordsFilter.Input.SetDoneFunc(func(key tcell.Key) {
 		switch key {
@@ -53,7 +56,13 @@ func NewResultsFilter() *ResultsTableFilter {
 
 		}
 	})
-	recordsFilter.Input.SetAutocompleteStyles(app.Styles.PrimitiveBackgroundColor, tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(app.Styles.PrimitiveBackgroundColor), tcell.StyleDefault.Foreground(app.Styles.SecondaryTextColor).Background(app.Styles.PrimitiveBackgroundColor))
+
+	// Autocomplete dropdown uses same background as input field
+	recordsFilter.Input.SetAutocompleteStyles(
+		fieldBgColor,
+		tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(fieldBgColor),
+		tcell.StyleDefault.Foreground(app.Styles.SecondaryTextColor).Background(fieldBgColor),
+	)
 
 	recordsFilter.AddItem(recordsFilter.Label, 6, 0, false)
 	recordsFilter.AddItem(recordsFilter.Input, 0, 1, false)
