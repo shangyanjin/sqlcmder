@@ -70,6 +70,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tree refresh after import operations
   - Updated placeholder text with command instructions
 
+##### WHERE Filter Dropdown Styling
+- **Improved WHERE clause filter field dropdown appearance**
+  - Dropdown background color now uses `ButtonBackgroundColor` (light gray)
+  - Matches the appearance of dialog buttons for visual consistency
+  - Better visual distinction from input field while maintaining harmony
+  - Selected items use `InverseTextColor` for high contrast text
+  - All colors managed through theme system for consistency across themes
+
 ### Bug Fixes
 
 #### MySQL Connection DSN Format
