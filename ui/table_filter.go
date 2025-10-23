@@ -31,7 +31,7 @@ func NewResultsFilter() *ResultsTableFilter {
 	recordsFilter.Label.SetText("WHERE")
 	recordsFilter.Label.SetBorderPadding(0, 0, 0, 1)
 
-	recordsFilter.Input.SetPlaceholder("Enter a WHERE clause to filter the results")
+	recordsFilter.Input.SetPlaceholder("/ WHERE clause filter")
 	recordsFilter.Input.SetPlaceholderStyle(tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(tview.Styles.PrimitiveBackgroundColor))
 	recordsFilter.Input.SetFieldBackgroundColor(app.Styles.PrimitiveBackgroundColor)
 	recordsFilter.Input.SetFieldTextColor(app.Styles.PrimaryTextColor)

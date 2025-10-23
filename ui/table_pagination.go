@@ -26,7 +26,7 @@ func NewPagination() *Pagination {
 	// wrapper.SetBorder(true)  // Remove border to save space
 
 	textView := tview.NewTextView()
-	textView.SetText(fmt.Sprintf("[yellow]c[white] Edit  [yellow]d[white] Delete  [yellow]o[white] Add  [yellow]<>[white] Page  [yellow]CTRL+s[white] Commit  |  %s-%s of %s rows", "0", "0", "0"))
+	textView.SetText(fmt.Sprintf("[yellow]c[white] Edit  [yellow]d[white] Delete  [yellow]o[white] Add  [yellow]<>[white] Page  [yellow]/[white] Where  [yellow]CTRL+s[white] Commit  |  %s-%s of %s rows", "0", "0", "0"))
 	textView.SetTextAlign(tview.AlignCenter)
 	textView.SetDynamicColors(true)
 
@@ -76,7 +76,7 @@ func (pagination *Pagination) SetTotalRecords(total int) {
 		limit = total
 	}
 
-	pagination.textView.SetText(fmt.Sprintf("[yellow]c[white] Edit  [yellow]d[white] Delete  [yellow]o[white] Add  [yellow]<>[white] Page  [yellow]CTRL+s[white] Commit  |  %d-%d of %d rows", offset, limit, total))
+	pagination.textView.SetText(fmt.Sprintf("[yellow]c[white] Edit  [yellow]d[white] Delete  [yellow]o[white] Add  [yellow]<>[white] Page  [yellow]/[white] Where  [yellow]CTRL+s[white] Commit  |  %d-%d of %d rows", offset, limit, total))
 }
 
 func (pagination *Pagination) SetLimit(limit int) {
@@ -92,7 +92,7 @@ func (pagination *Pagination) SetLimit(limit int) {
 		limit = total
 	}
 
-	pagination.textView.SetText(fmt.Sprintf("[yellow]c[white] Edit  [yellow]d[white] Delete  [yellow]o[white] Add  [yellow]<>[white] Page  [yellow]CTRL+s[white] Commit  |  %d-%d of %d rows", offset, limit, total))
+	pagination.textView.SetText(fmt.Sprintf("[yellow]c[white] Edit  [yellow]d[white] Delete  [yellow]o[white] Add  [yellow]<>[white] Page  [yellow]/[white] Where  [yellow]CTRL+s[white] Commit  |  %d-%d of %d rows", offset, limit, total))
 }
 
 func (pagination *Pagination) SetOffset(offset int) {
@@ -108,5 +108,5 @@ func (pagination *Pagination) SetOffset(offset int) {
 		limit = total
 	}
 
-	pagination.textView.SetText(fmt.Sprintf("[yellow]c[white] Edit  [yellow]d[white] Delete  [yellow]o[white] Add  [yellow]<>[white] Page  [yellow]CTRL+s[white] Commit  |  %d-%d of %d rows", offset, limit, total))
+	pagination.textView.SetText(fmt.Sprintf("[yellow]c[white] Edit  [yellow]d[white] Delete  [yellow]o[white] Add  [yellow]<>[white] Page  [yellow]/[white] Where  [yellow]CTRL+s[white] Commit  |  %d-%d of %d rows", offset, limit, total))
 }

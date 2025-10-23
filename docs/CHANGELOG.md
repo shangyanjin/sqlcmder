@@ -132,7 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Table Interface Enhancements
 - **Added table shortcut hints in pagination area**
-  - Displayed common table shortcuts: `c Edit`, `d Delete`, `o Add`, `<> Page`, `CTRL+s Commit`
+  - Displayed common table shortcuts: `c Edit`, `d Delete`, `o Add`, `<> Page`, `/ Where`, `CTRL+s Commit`
   - Used color-coded shortcuts (yellow) with white action descriptions
   - Added separator between shortcuts and pagination info
   - Improved discoverability of table operations
@@ -150,6 +150,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Used `PrimaryTextColor` for foreground in field editing
   - Aligned field edit colors with dark theme settings
   - Improved visual consistency across table and sidebar editing
+
+#### File Naming Standardization
+- **Standardized UI component naming convention**
+  - `filter_table_view.go` → `table_filter.go` (entity-first naming pattern)
+  - `pagination_table.go` → `table_pagination.go` (consistent naming pattern)
+  - `tree_database.go` → `database_tree.go` (consistent naming pattern)
+  - Improved code organization with predictable file names
+  - Easier to locate related components using consistent prefix patterns
 
 ## [0.3.3] - 2025-10-22
 
