@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+
+#### SQL Editor Shortcut Commands
+- **Added backup and import commands in SQL editor**
+  - Type `backup <filename>` to backup current database
+  - Type `import <filename>` to import SQL file to current database
+  - Commands work directly in SQL editor without switching contexts
+  - Automatic loading states and result display
+  - Tree refresh after import operations
+  - Updated placeholder text with command instructions
+
+### Bug Fixes
+
+#### MySQL Connection DSN Format
+- **Fixed MySQL DSN generation error**
+  - Changed from `mysql://user:pass@tcp(host:port)/db` to `mysql://user:pass@host:port/db`
+  - Removed `@tcp()` wrapper that was causing parse errors
+  - Now uses standard dburl format compatible with `xo/dburl` library
+  - Fixes: `invalid port ":3306)" after host` error
+
+### Documentation
+
+#### README Updates
+- **Simplified Quick Start section**
+  - Removed redundant command line examples
+  - Focused on connection form usage
+  
+- **Added DSN Connection Examples section**
+  - Comprehensive DSN format examples for all supported databases
+  - PostgreSQL, MySQL, SQL Server, Oracle, SAP HANA, SQLite, ODBC formats
+  - Placed at end of README for easy reference
+
+- **Updated SQL Editor documentation**
+  - Added shortcut commands section
+  - Documented backup and import commands
+
 ### UI/UX Improvements
 
 #### Command Palette Removal
