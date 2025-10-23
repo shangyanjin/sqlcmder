@@ -46,7 +46,7 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 
 	connectionIdentifier := connection.Name
 	if connectionIdentifier == "" {
-		parsedURL, err := url.Parse(connection.DSN)
+		parsedURL, err := url.Parse(connection.GetDSN())
 		if err == nil {
 			connectionIdentifier = history.SanitizeFilename(parsedURL.Host + strings.ReplaceAll(parsedURL.Path, "/", "_"))
 		} else {
@@ -65,7 +65,7 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 		DBDriver:             dbdriver,
 		ListOfDBChanges:      []models.DBDMLChange{},
 		ConnectionIdentifier: connectionIdentifier,
-		ConnectionURL:        connection.DSN,
+		ConnectionURL:        connection.GetDSN(),
 		Connection:           connection, // Store full connection
 	}
 
@@ -124,7 +124,7 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 		}
 	})
 
-	mainPages.AddPage(connection.DSN, home, true, false)
+	mainPages.AddPage(connection.GetDSN(), home, true, false)
 	return home
 }
 

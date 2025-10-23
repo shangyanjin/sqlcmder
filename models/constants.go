@@ -35,7 +35,6 @@ const (
 	PageNameQueryHistory     = "QueryHistoryModal"
 	PageNameSaveQuery        = "SaveQueryModal"
 	PageNameSavedQueryDelete = "SavedQueryDeleteModal"
-
 )
 
 // Tab names
@@ -108,6 +107,11 @@ type ColorScheme struct {
 	Border                   tcell.Color // Border color
 	Highlight                tcell.Color // Highlight/accent color
 	ButtonBg                 tcell.Color // Button background color
+	ButtonTextColor          tcell.Color // Button text color (unselected)
+	ButtonUnselectedBgColor  tcell.Color // Button background color (unselected)
+	ContrastBackgroundColor  tcell.Color // High contrast background color
+	MoreContrastBgColor      tcell.Color // More contrast background color
+	GraphicsColor            tcell.Color // Graphics/border graphics color
 	UnfocusedBorder          tcell.Color // Unfocused panel border (lighter/dimmer)
 	UnfocusedText            tcell.Color // Unfocused panel text (slightly dimmed)
 	AccentYellow             tcell.Color // Accent color for highlights (focused)
@@ -127,13 +131,18 @@ var ColorSchemes = map[string]*ColorScheme{
 		InputText:                tcell.NewRGBColor(210, 210, 210), // 柔和白色
 		Border:                   tcell.NewRGBColor(100, 100, 100), // 适中灰色
 		Highlight:                tcell.NewRGBColor(100, 180, 230), // 柔和青色 (降低饱和度)
-		ButtonBg:                 tcell.NewRGBColor(60, 60, 65),    // 深灰色按钮背景
+		ButtonBg:                 tcell.NewRGBColor(80, 80, 85),    // 按钮背景（已选中和未选中相同）
+		ButtonTextColor:          tcell.NewRGBColor(230, 220, 100), // 已选中按钮文字（黄色亮眼）
+		ButtonUnselectedBgColor:  tcell.NewRGBColor(80, 80, 85),    // 按钮背景（已选中和未选中相同）
+		ContrastBackgroundColor:  tcell.NewRGBColor(25, 25, 25),    // 深色背景，用于主要UI元素
+		MoreContrastBgColor:      tcell.NewRGBColor(25, 25, 25),    // 深色背景，用于主要UI元素
+		GraphicsColor:            tcell.NewRGBColor(100, 100, 100), // 适中灰色
 		UnfocusedBorder:          tcell.NewRGBColor(80, 80, 80),    // 未聚焦面板边框 (略微变暗，差别不大)
 		UnfocusedText:            tcell.NewRGBColor(160, 160, 160), // 未聚焦文字 (略微变暗)
 		AccentYellow:             tcell.NewRGBColor(230, 220, 100), // 柔和黄色
 		AccentGreen:              tcell.NewRGBColor(120, 200, 120), // 柔和绿色
 		UnfocusedAccent:          tcell.NewRGBColor(140, 140, 140), // 失去焦点的彩色变灰
-		SelectedTextColor:        tcell.NewRGBColor(40, 40, 40),    // 选中行文字（深色，与黄色背景高对比）
+		SelectedTextColor:        tcell.NewRGBColor(40, 40, 40),    // 未选中按钮文字（深色，低调）
 		PrimitiveBackgroundColor: tcell.NewRGBColor(25, 25, 25),    // 深色背景，用于主要UI元素
 	},
 	ThemeLight: {
@@ -144,7 +153,12 @@ var ColorSchemes = map[string]*ColorScheme{
 		InputText:                tcell.NewRGBColor(40, 40, 40),    // 深灰文字
 		Border:                   tcell.NewRGBColor(200, 200, 200), // 浅灰边框
 		Highlight:                tcell.NewRGBColor(70, 130, 200),  // 柔和蓝色 (降低亮度)
-		ButtonBg:                 tcell.NewRGBColor(230, 230, 230), // 中灰色按钮背景
+		ButtonBg:                 tcell.NewRGBColor(210, 210, 210), // 更暗的按钮背景以增加对比度
+		ButtonTextColor:          tcell.NewRGBColor(40, 40, 40),    // 深灰文字，与按钮背景高对比
+		ButtonUnselectedBgColor:  tcell.NewRGBColor(210, 210, 210), // 更暗的按钮背景以增加对比度
+		ContrastBackgroundColor:  tcell.NewRGBColor(255, 255, 255), // 白色背景，用于主要UI元素
+		MoreContrastBgColor:      tcell.NewRGBColor(255, 255, 255), // 白色背景，用于主要UI元素
+		GraphicsColor:            tcell.NewRGBColor(200, 200, 200), // 浅灰边框
 		UnfocusedBorder:          tcell.NewRGBColor(210, 210, 210), // 未聚焦面板边框 (略微变淡，差别不大)
 		UnfocusedText:            tcell.NewRGBColor(120, 120, 120), // 未聚焦文字 (略微变淡)
 		AccentYellow:             tcell.NewRGBColor(200, 160, 0),   // 深黄色
@@ -161,7 +175,12 @@ var ColorSchemes = map[string]*ColorScheme{
 		InputText:                tcell.NewRGBColor(147, 161, 161), // Base1
 		Border:                   tcell.NewRGBColor(88, 110, 117),  // Base01
 		Highlight:                tcell.NewRGBColor(42, 161, 152),  // Cyan
-		ButtonBg:                 tcell.NewRGBColor(7, 54, 66),     // Base02
+		ButtonBg:                 tcell.NewRGBColor(38, 139, 210),  // 更明亮的按钮背景 (Blue)
+		ButtonTextColor:          tcell.NewRGBColor(181, 137, 0),   // Yellow，与按钮背景高对比
+		ButtonUnselectedBgColor:  tcell.NewRGBColor(38, 139, 210),  // 更明亮的按钮背景 (Blue)
+		ContrastBackgroundColor:  tcell.NewRGBColor(0, 43, 54),     // Base03 深色背景
+		MoreContrastBgColor:      tcell.NewRGBColor(0, 43, 54),     // Base03 深色背景
+		GraphicsColor:            tcell.NewRGBColor(88, 110, 117),  // Base01
 		UnfocusedBorder:          tcell.NewRGBColor(70, 90, 100),   // 略微变暗的 Base01
 		UnfocusedText:            tcell.NewRGBColor(101, 123, 131), // 略微变暗的文字
 		AccentYellow:             tcell.NewRGBColor(181, 137, 0),   // Yellow
@@ -178,7 +197,12 @@ var ColorSchemes = map[string]*ColorScheme{
 		InputText:                tcell.NewRGBColor(235, 219, 178), // fg
 		Border:                   tcell.NewRGBColor(80, 73, 69),    // bg2
 		Highlight:                tcell.NewRGBColor(131, 165, 152), // aqua
-		ButtonBg:                 tcell.NewRGBColor(60, 56, 54),    // bg1
+		ButtonBg:                 tcell.NewRGBColor(100, 90, 80),   // 更明亮的按钮背景
+		ButtonTextColor:          tcell.NewRGBColor(250, 189, 47),  // yellow，与按钮背景高对比
+		ButtonUnselectedBgColor:  tcell.NewRGBColor(100, 90, 80),   // 更明亮的按钮背景
+		ContrastBackgroundColor:  tcell.NewRGBColor(29, 32, 33),    // bg0 深色背景
+		MoreContrastBgColor:      tcell.NewRGBColor(29, 32, 33),    // bg0 深色背景
+		GraphicsColor:            tcell.NewRGBColor(80, 73, 69),    // bg2
 		UnfocusedBorder:          tcell.NewRGBColor(70, 65, 62),    // 略微变暗的 bg2
 		UnfocusedText:            tcell.NewRGBColor(200, 186, 155), // 略微变暗的 fg
 		AccentYellow:             tcell.NewRGBColor(250, 189, 47),  // yellow
@@ -195,7 +219,12 @@ var ColorSchemes = map[string]*ColorScheme{
 		InputText:                tcell.NewRGBColor(236, 239, 244), // Snow Storm
 		Border:                   tcell.NewRGBColor(76, 86, 106),   // Polar Night 2
 		Highlight:                tcell.NewRGBColor(136, 192, 208), // Frost
-		ButtonBg:                 tcell.NewRGBColor(59, 66, 82),    // Polar Night 1
+		ButtonBg:                 tcell.NewRGBColor(88, 110, 140),  // 更明亮的按钮背景 (Frost-inspired)
+		ButtonTextColor:          tcell.NewRGBColor(235, 203, 139), // Aurora yellow，与按钮背景高对比
+		ButtonUnselectedBgColor:  tcell.NewRGBColor(88, 110, 140),  // 更明亮的按钮背景 (Frost-inspired)
+		ContrastBackgroundColor:  tcell.NewRGBColor(46, 52, 64),    // Polar Night 0 深色背景
+		MoreContrastBgColor:      tcell.NewRGBColor(46, 52, 64),    // Polar Night 0 深色背景
+		GraphicsColor:            tcell.NewRGBColor(76, 86, 106),   // Polar Night 2
 		UnfocusedBorder:          tcell.NewRGBColor(65, 75, 95),    // 略微变暗的 Polar Night 2
 		UnfocusedText:            tcell.NewRGBColor(200, 205, 215), // 略微变暗的 Snow Storm
 		AccentYellow:             tcell.NewRGBColor(235, 203, 139), // Aurora yellow

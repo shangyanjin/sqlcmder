@@ -1,20 +1,53 @@
-ConfigFile = './config.toml'
+ConfigFile = 'D:\Github\sqlcmder\config.toml'
 
 [application]
 DefaultPageSize = 300
 DisableSidebar = false
 SidebarOverlay = false
 MaxQueryHistoryPerConnection = 100
-theme = "dark"  # Available: dark, light, solarized, gruvbox, nord
+theme = 'dark'
 
 [[database]]
 Name = 'support'
 DSN = 'postgres://postgres:postgres@localhost:5432/support?sslmode=disable'
+DsnCustom = ''
+DsnAuto = ''
+DsnValue = 'postgres://postgres:postgres@localhost:5432/support?sslmode=disable'
 Driver = 'postgres'
 Username = 'postgres'
 Password = 'postgres'
 Hostname = 'localhost'
 Port = '5432'
 DBName = 'support'
+DSNParams = ''
+Commands = []
+
+[[database]]
+Name = 'blog@mysql'
+DSN = 'mysql://root:root@localhost:3306/blog'
+DsnCustom = 'mysql://root:root@localhost:3306/blog'
+DsnAuto = 'mysql://root:root@localhost:3306/blog'
+DsnValue = 'mysql://root:root@localhost:3306/blog'
+Driver = 'mysql'
+Username = 'root'
+Password = 'root'
+Hostname = 'localhost'
+Port = '3306'
+DBName = 'blog'
+DSNParams = ''
+Commands = []
+
+[[database]]
+Name = 'press@mysql'
+DSN = 'mysql://root:root@localhost:3306/press'
+DsnCustom = 'mysql://root:root@localhost:3306/press'
+DsnAuto = 'mysql://root:root@localhost:3306/press'
+DsnValue = 'mysql://root:root@localhost:3306/press'
+Driver = 'mysql'
+Username = 'root'
+Password = 'root'
+Hostname = 'localhost'
+Port = '3306'
+DBName = 'press'
 DSNParams = ''
 Commands = []

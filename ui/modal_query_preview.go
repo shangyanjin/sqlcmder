@@ -7,12 +7,12 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
-	"sqlcmder/keymap"
-	"sqlcmder/cli"
 	"sqlcmder/drivers"
-	"sqlcmder/logger"
 	"sqlcmder/helpers"
+	"sqlcmder/keymap"
+	"sqlcmder/logger"
 	"sqlcmder/models"
 )
 
@@ -50,7 +50,9 @@ func NewQueryPreviewModal(queries *[]models.DBDMLChange, dbdriver drivers.Driver
 	errorModal.SetText("An error occurred")
 	errorModal.SetBackgroundColor(tcell.ColorRed)
 	errorModal.SetTextColor(app.Styles.PrimaryTextColor)
-	errorModal.SetButtonStyle(tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor))
+	errorModal.SetButtonStyle(tcell.StyleDefault.
+		Background(app.Styles.ButtonBackgroundColor).
+		Foreground(app.Styles.PrimaryTextColor))
 	errorModal.SetFocus(0)
 
 	keybindings := tview.NewTextView()

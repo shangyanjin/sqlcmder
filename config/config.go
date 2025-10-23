@@ -66,6 +66,7 @@ func LoadConfig(configFile string, config *Config) error {
 
 	for i, conn := range config.Connections {
 		config.Connections[i].DSN = parseConfigDSN(&conn)
+		config.Connections[i].SetDSNValue() // Ensure DsnValue is set
 	}
 
 	return nil
@@ -91,7 +92,20 @@ func (c *Config) SaveConnections(connections []models.Connection) error {
 // if the DSN is empty. It is useful for handling usernames and passwords with
 // special characters. NOTE: Only MSSQL is supported for now!
 func parseConfigDSN(conn *models.Connection) string {
+	// Handle new DSN structure with priority: custom > auto-generated
+	if conn.DsnCustom != "" {
+		conn.DsnValue = conn.DsnCustom
+		return conn.DsnCustom
+	}
+	
+	if conn.DsnAuto != "" {
+		conn.DsnValue = conn.DsnAuto
+		return conn.DsnAuto
+	}
+	
+	// Fallback to legacy DSN field for backward compatibility
 	if conn.DSN != "" {
+		conn.DsnValue = conn.DSN
 		return conn.DSN
 	}
 
@@ -103,7 +117,7 @@ func parseConfigDSN(conn *models.Connection) string {
 	user := url.QueryEscape(conn.Username)
 	pass := url.QueryEscape(conn.Password)
 
-	return fmt.Sprintf(
+	autoDSN := fmt.Sprintf(
 		"%s://%s:%s@%s:%s?database=%s%s",
 		conn.Driver,
 		user,
@@ -113,4 +127,10 @@ func parseConfigDSN(conn *models.Connection) string {
 		conn.DBName,
 		conn.DSNParams,
 	)
+	
+	// Update the new DSN fields
+	conn.DsnAuto = autoDSN
+	conn.DsnValue = autoDSN
+	
+	return autoDSN
 }

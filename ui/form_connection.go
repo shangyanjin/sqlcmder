@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"net/url"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
@@ -32,18 +34,18 @@ func NewConnectionForm(connectionPages *models.ConnectionPages) *ConnectionForm 
 	wrapper.SetDirection(tview.FlexColumnCSS)
 
 	// Create individual form fields with defaults for PostgreSQL
-	dbTypeField := tview.NewInputField().SetLabel("Database Type").SetText(drivers.DriverPostgres).SetFieldWidth(0)
-	nameField := tview.NewInputField().SetLabel("Connection Name").SetFieldWidth(0)
+	dbTypeField := tview.NewInputField().SetLabel("DB Type").SetText(drivers.DriverPostgres).SetFieldWidth(0)
+	nameField := tview.NewInputField().SetLabel("Conn Name").SetFieldWidth(0)
 	hostField := tview.NewInputField().SetLabel("Hostname").SetText("localhost").SetFieldWidth(0)
 	portField := tview.NewInputField().SetLabel("Port").SetText("5432").SetFieldWidth(0)
 	userField := tview.NewInputField().SetLabel("Username").SetText("postgres").SetFieldWidth(0)
 	passField := tview.NewInputField().SetLabel("Password").SetText("postgres").SetFieldWidth(0)
 	dbNameField := tview.NewInputField().SetLabel("DB Name").SetFieldWidth(0)
 	sslCheckbox := tview.NewCheckbox().SetLabel("SSL Mode").SetChecked(false)
-	dsnField := tview.NewInputField().SetLabel("DSN (Auto)").SetFieldWidth(0)
+	dsnField := tview.NewInputField().SetLabel("DSN").SetFieldWidth(0)
 
 	// Helper function to auto-generate DSN
-	updateDSN := func() {
+	generateAutoDSN := func() string {
 		dbType := dbTypeField.GetText()
 		hostname := hostField.GetText()
 		port := portField.GetText()
@@ -85,19 +87,17 @@ func NewConnectionForm(connectionPages *models.ConnectionPages) *ConnectionForm 
 			}
 		}
 
-		dsnField.SetText(connectionString)
+		return connectionString
 	}
 
-	// Set change handlers to auto-update DSN
-	dbTypeField.SetChangedFunc(func(text string) { updateDSN() })
-	hostField.SetChangedFunc(func(text string) { updateDSN() })
-	portField.SetChangedFunc(func(text string) { updateDSN() })
-	userField.SetChangedFunc(func(text string) { updateDSN() })
-	passField.SetChangedFunc(func(text string) { updateDSN() })
-	dbNameField.SetChangedFunc(func(text string) { updateDSN() })
+	// Function to update DSN field with auto-generated value
+	updateDSNField := func() {
+		autoDSN := generateAutoDSN()
+		dsnField.SetText(autoDSN)
+	}
 
 	// Generate initial DSN
-	updateDSN()
+	updateDSNField()
 
 	// Set colors for all fields
 	for _, field := range []*tview.InputField{dbTypeField, nameField, hostField, portField, userField, passField, dbNameField, dsnField} {
@@ -135,18 +135,18 @@ func NewConnectionForm(connectionPages *models.ConnectionPages) *ConnectionForm 
 
 	buttonsWrapper := tview.NewFlex().SetDirection(tview.FlexColumn)
 
-	saveButton := tview.NewButton("[yellow]F1 [dark]Save")
+	saveButton := tview.NewButton("[yellow]F1 [dark]Save & Test")
 	saveButton.SetStyle(tcell.StyleDefault.Background(app.Styles.ButtonBackgroundColor))
 	saveButton.SetBorder(true)
 
 	buttonsWrapper.AddItem(saveButton, 0, 1, false)
 	buttonsWrapper.AddItem(nil, 1, 0, false)
 
-	testButton := tview.NewButton("[yellow]F2 [dark]Test")
-	testButton.SetStyle(tcell.StyleDefault.Background(app.Styles.ButtonBackgroundColor))
-	testButton.SetBorder(true)
+	autoButton := tview.NewButton("[yellow]F2 [dark]Auto DSN")
+	autoButton.SetStyle(tcell.StyleDefault.Background(app.Styles.ButtonBackgroundColor))
+	autoButton.SetBorder(true)
 
-	buttonsWrapper.AddItem(testButton, 0, 1, false)
+	buttonsWrapper.AddItem(autoButton, 0, 1, false)
 	buttonsWrapper.AddItem(nil, 1, 0, false)
 
 	connectButton := tview.NewButton("[yellow]F3 [dark]Connect")
@@ -256,124 +256,160 @@ func (form *ConnectionForm) inputCapture(connectionPages *models.ConnectionPages
 		if event.Key() == tcell.KeyEsc {
 			connectionPages.SwitchToPage(pageNameConnectionSelection)
 		} else if event.Key() == tcell.KeyF1 || event.Key() == tcell.KeyEnter {
-			// Get form field values
-			dbType := form.DbTypeField.GetText()
-			connectionName := form.NameField.GetText()
-			hostname := form.HostField.GetText()
-			port := form.PortField.GetText()
-			username := form.UserField.GetText()
-			password := form.PassField.GetText()
-			database := form.DBNameField.GetText()
-			sslMode := form.SSLCheckbox.IsChecked()
-			dsn := form.DSNField.GetText()
-
-			if connectionName == "" {
-				form.StatusText.SetText("Connection name is required").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
-				return event
-			}
-
-			// Build connection string from form fields or use DSN directly
-			var connectionString string
-			if dsn != "" {
-				connectionString = dsn
-			} else {
-				connectionString = form.buildConnectionString(dbType, hostname, port, username, password, database, sslMode)
-			}
-
-			// Validate connection string only if it's not empty
-			if connectionString != "" {
-				_, err := helpers.ParseConnectionString(connectionString)
-				if err != nil {
-					form.StatusText.SetText("Warning: " + err.Error() + " (saved anyway)").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
-				}
-			}
-
-			databases := app.App.Connections()
-			newDatabases := make([]models.Connection, len(databases))
-
-			parsedDatabaseData := models.Connection{
-				Name:     connectionName,
-				Driver:   dbType,
-				Hostname: hostname,
-				Port:     port,
-				Username: username,
-				Password: password,
-				DBName:   database,
-				DSN:      connectionString,
-			}
-
-			switch form.Action {
-			case actionNewConnection:
-
-				newDatabases = append(databases, parsedDatabaseData)
-				err := app.App.SaveConnections(newDatabases)
-				if err != nil {
-					form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
-					return event
-				}
-				configPath := app.App.GetConfigFilePath()
-				form.StatusText.SetText("Saved to: " + configPath).SetTextColor(app.Styles.TertiaryTextColor)
-
-			case actionEditConnection:
-				newDatabases = make([]models.Connection, len(databases))
-				row, _ := connectionsTable.GetSelection()
-
-				for i, database := range databases {
-					if i == row {
-						newDatabases[i] = parsedDatabaseData
-
-						// newDatabases[i].Name = connectionName
-						// newDatabases[i].Driver = database.Driver
-						// newDatabases[i].User = parsed.User.Username()
-						// newDatabases[i].Password, _ = parsed.User.Password()
-						// newDatabases[i].Host = parsed.Hostname()
-						// newDatabases[i].Port = parsed.Port()
-						// newDatabases[i].Query = parsed.Query().Encode()
-						// newDatabases[i].DBName = helpers.ParsedDBName(parsed.Path)
-						// newDatabases[i].DSN = parsed.DSN
-					} else {
-						newDatabases[i] = database
-					}
-				}
-
-				err := app.App.SaveConnections(newDatabases)
-				if err != nil {
-					form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
-					return event
-				}
-				configPath := app.App.GetConfigFilePath()
-				form.StatusText.SetText("Updated: " + configPath).SetTextColor(app.Styles.TertiaryTextColor)
-			}
-
-			connectionsTable.SetConnections(newDatabases)
-			connectionPages.SwitchToPage(pageNameConnectionSelection)
-
+			// F1 - Save & Test (test first, then save)
+			go form.saveAndTestConnection()
 		} else if event.Key() == tcell.KeyF2 {
-			// Get form field values for testing
-			dbType := form.DbTypeField.GetText()
-			hostname := form.HostField.GetText()
-			port := form.PortField.GetText()
-			username := form.UserField.GetText()
-			password := form.PassField.GetText()
-			database := form.DBNameField.GetText()
-			sslMode := form.SSLCheckbox.IsChecked()
-			dsn := form.DSNField.GetText()
-
-			// Build connection string from form fields or use DSN directly
-			var connectionString string
-			if dsn != "" {
-				connectionString = dsn
-			} else {
-				connectionString = form.buildConnectionString(dbType, hostname, port, username, password, database, sslMode)
-			}
-
-			go form.testConnection(connectionString)
+			// F2 - Auto generate DSN
+			form.autoGenerateDSN()
 		} else if event.Key() == tcell.KeyF3 {
-			// F3 - Connect directly
-			// TODO: Add direct connect logic if needed
+			// F3 - Save & Test + Connect
+			go form.saveTestAndConnect()
 		}
 		return event
 	}
+}
+
+// saveAndTestConnection tests the connection first, then saves if test passes
+func (form *ConnectionForm) saveAndTestConnection() {
+	// Get form field values
+	dbType := form.DbTypeField.GetText()
+	connectionName := form.NameField.GetText()
+	hostname := form.HostField.GetText()
+	port := form.PortField.GetText()
+	username := form.UserField.GetText()
+	password := form.PassField.GetText()
+	database := form.DBNameField.GetText()
+	sslMode := form.SSLCheckbox.IsChecked()
+	dsn := form.DSNField.GetText()
+
+	if connectionName == "" {
+		form.StatusText.SetText("Connection name is required").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		return
+	}
+
+	// Build connection string with priority: custom DSN > auto-generated
+	var connectionString string
+	var dsnCustom string
+	dsnAuto := form.buildConnectionString(dbType, hostname, port, username, password, database, sslMode)
+
+	// Use custom DSN if provided, otherwise use auto-generated and show hint
+	if dsn != "" {
+		dsnCustom = dsn
+		connectionString = dsn
+	} else {
+		connectionString = dsnAuto
+		// Show hint that DSN was auto-generated
+		form.StatusText.SetText("[green]DSN: " + dsnAuto).SetDynamicColors(true)
+		App.Draw()
+	}
+
+	// Test connection first
+	form.StatusText.SetText("Testing connection...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+	App.Draw()
+
+	// Test the connection
+	testResult := form.testConnectionSync(connectionString)
+	if !testResult {
+		form.StatusText.SetText("Connection test failed. Please check your settings.").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		return
+	}
+
+	// If test passes, proceed with save
+	form.StatusText.SetText("Connection test passed. Saving...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorGreen))
+	App.Draw()
+
+	// Validate connection string only if it's not empty
+	if connectionString != "" {
+		_, err := helpers.ParseConnectionString(connectionString)
+		if err != nil {
+			form.StatusText.SetText("Warning: " + err.Error() + " (saved anyway)").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+		}
+	}
+
+	databases := app.App.Connections()
+	newDatabases := make([]models.Connection, len(databases))
+
+	parsedDatabaseData := models.Connection{
+		Name:      connectionName,
+		Driver:    dbType,
+		Hostname:  hostname,
+		Port:      port,
+		Username:  username,
+		Password:  password,
+		DBName:    database,
+		DSN:       connectionString, // Keep for backward compatibility
+		DsnCustom: dsnCustom,
+		DsnAuto:   dsnAuto,
+		DsnValue:  connectionString,
+	}
+
+	switch form.Action {
+	case actionNewConnection:
+		newDatabases = append(databases, parsedDatabaseData)
+		err := app.App.SaveConnections(newDatabases)
+		if err != nil {
+			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+			return
+		}
+		configPath := app.App.GetConfigFilePath()
+		form.StatusText.SetText("Saved to: " + configPath).SetTextColor(app.Styles.TertiaryTextColor)
+
+	case actionEditConnection:
+		newDatabases = make([]models.Connection, len(databases))
+		row, _ := connectionsTable.GetSelection()
+
+		for i, database := range databases {
+			if i == row {
+				newDatabases[i] = parsedDatabaseData
+			} else {
+				newDatabases[i] = database
+			}
+		}
+
+		err := app.App.SaveConnections(newDatabases)
+		if err != nil {
+			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+			return
+		}
+		configPath := app.App.GetConfigFilePath()
+		form.StatusText.SetText("Saved to: " + configPath).SetTextColor(app.Styles.TertiaryTextColor)
+	}
+
+	connectionsTable.SetConnections(newDatabases)
+	// Note: connectionPages is not available in this context,
+	// the page switching will be handled by the calling function
+}
+
+// testConnectionSync tests connection synchronously and returns true if successful
+func (form *ConnectionForm) testConnectionSync(connectionString string) bool {
+	// Parse connection string to get driver type
+	parsedURL, err := url.Parse(connectionString)
+	if err != nil {
+		return false
+	}
+
+	var driver drivers.Driver
+	switch parsedURL.Scheme {
+	case "postgres":
+		driver = &drivers.Postgres{}
+	case "mysql":
+		driver = &drivers.MySQL{}
+	case "sqlite":
+		driver = &drivers.SQLite{}
+	case "sqlserver":
+		driver = &drivers.MSSQL{}
+	default:
+		return false
+	}
+
+	// Test connection
+	err = driver.Connect(connectionString)
+	if err != nil {
+		return false
+	}
+
+	// Connection successful
+	return true
 }
 
 func (form *ConnectionForm) testConnection(connectionString string) {
@@ -408,8 +444,24 @@ func (form *ConnectionForm) testConnection(connectionString string) {
 	App.ForceDraw()
 }
 
+// SetAction sets the action for the connection form (new or edit)
 func (form *ConnectionForm) SetAction(action string) {
 	form.Action = action
+}
+
+// showDSNHint displays DSN information in StatusText
+// For new connections: shows hint if DSN is empty
+// For edit connections: shows current DSN value
+func (form *ConnectionForm) showDSNHint() {
+	dsn := form.DSNField.GetText()
+
+	if dsn == "" {
+		// For new connection or when DSN is empty
+		form.StatusText.SetText("[green]DSN: (auto-generate if empty)").SetDynamicColors(true)
+	} else {
+		// For edit connection or when DSN has value
+		form.StatusText.SetText("[green]DSN: " + dsn).SetDynamicColors(true)
+	}
 }
 
 // setDatabasePreset sets the database type and fills in default values
@@ -491,4 +543,193 @@ func (form *ConnectionForm) buildConnectionString(dbType, hostname, port, userna
 	}
 
 	return connectionString
+}
+
+// getOrAutoGenerateDSN returns the DSN from field or auto-generates it if empty
+// Also updates StatusText with hint if DSN was empty
+func (form *ConnectionForm) getOrAutoGenerateDSN() string {
+	dsn := form.DSNField.GetText()
+
+	// If DSN is empty, auto-generate it and show hint
+	if dsn == "" {
+		dbType := form.DbTypeField.GetText()
+		hostname := form.HostField.GetText()
+		port := form.PortField.GetText()
+		username := form.UserField.GetText()
+		password := form.PassField.GetText()
+		database := form.DBNameField.GetText()
+		sslMode := form.SSLCheckbox.IsChecked()
+
+		dsn = form.buildConnectionString(dbType, hostname, port, username, password, database, sslMode)
+		form.StatusText.SetText("[green]DSN: " + dsn).SetDynamicColors(true)
+	}
+
+	return dsn
+}
+
+// autoGenerateDSN generates DSN automatically and updates the DSN field
+func (form *ConnectionForm) autoGenerateDSN() {
+	dbType := form.DbTypeField.GetText()
+	hostname := form.HostField.GetText()
+	port := form.PortField.GetText()
+	username := form.UserField.GetText()
+	password := form.PassField.GetText()
+	database := form.DBNameField.GetText()
+	sslMode := form.SSLCheckbox.IsChecked()
+
+	autoDSN := form.buildConnectionString(dbType, hostname, port, username, password, database, sslMode)
+	form.DSNField.SetText(autoDSN)
+
+	// Show status message with DSN value - consistent with getOrAutoGenerateDSN style
+	form.StatusText.SetText("[green]DSN: " + autoDSN).SetDynamicColors(true)
+}
+
+// saveTestAndConnect tests the connection, saves it, and then connects to the database
+func (form *ConnectionForm) saveTestAndConnect() {
+	// Get form field values
+	dbType := form.DbTypeField.GetText()
+	connectionName := form.NameField.GetText()
+	hostname := form.HostField.GetText()
+	port := form.PortField.GetText()
+	username := form.UserField.GetText()
+	password := form.PassField.GetText()
+	database := form.DBNameField.GetText()
+	sslMode := form.SSLCheckbox.IsChecked()
+	dsn := form.DSNField.GetText()
+
+	if connectionName == "" {
+		form.StatusText.SetText("Connection name is required").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		return
+	}
+
+	// Build connection string with priority: custom DSN > auto-generated
+	var connectionString string
+	var dsnCustom string
+	dsnAuto := form.buildConnectionString(dbType, hostname, port, username, password, database, sslMode)
+
+	// Use custom DSN if provided, otherwise use auto-generated and show hint
+	if dsn != "" {
+		dsnCustom = dsn
+		connectionString = dsn
+	} else {
+		connectionString = dsnAuto
+		// Show hint that DSN was auto-generated
+		form.StatusText.SetText("[green]DSN: " + dsnAuto).SetDynamicColors(true)
+		App.Draw()
+	}
+
+	// Test connection first
+	form.StatusText.SetText("Testing connection...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+	App.Draw()
+
+	// Test the connection
+	testResult := form.testConnectionSync(connectionString)
+	if !testResult {
+		form.StatusText.SetText("Connection test failed. Please check your settings.").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		return
+	}
+
+	// If test passes, proceed with save
+	form.StatusText.SetText("Connection test passed. Saving...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorGreen))
+	App.Draw()
+
+	// Validate connection string only if it's not empty
+	if connectionString != "" {
+		_, err := helpers.ParseConnectionString(connectionString)
+		if err != nil {
+			form.StatusText.SetText("Warning: " + err.Error() + " (saved anyway)").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+		}
+	}
+
+	databases := app.App.Connections()
+	newDatabases := make([]models.Connection, len(databases))
+
+	parsedDatabaseData := models.Connection{
+		Name:      connectionName,
+		Driver:    dbType,
+		Hostname:  hostname,
+		Port:      port,
+		Username:  username,
+		Password:  password,
+		DBName:    database,
+		DSN:       connectionString, // Keep for backward compatibility
+		DsnCustom: dsnCustom,
+		DsnAuto:   dsnAuto,
+		DsnValue:  connectionString,
+	}
+
+	switch form.Action {
+	case actionNewConnection:
+		newDatabases = append(databases, parsedDatabaseData)
+		err := app.App.SaveConnections(newDatabases)
+		if err != nil {
+			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+			return
+		}
+		configPath := app.App.GetConfigFilePath()
+		form.StatusText.SetText("Saved to: " + configPath).SetTextColor(app.Styles.TertiaryTextColor)
+
+	case actionEditConnection:
+		newDatabases = make([]models.Connection, len(databases))
+		row, _ := connectionsTable.GetSelection()
+
+		for i, database := range databases {
+			if i == row {
+				newDatabases[i] = parsedDatabaseData
+			} else {
+				newDatabases[i] = database
+			}
+		}
+
+		err := app.App.SaveConnections(newDatabases)
+		if err != nil {
+			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+			return
+		}
+		configPath := app.App.GetConfigFilePath()
+		form.StatusText.SetText("Saved to: " + configPath).SetTextColor(app.Styles.TertiaryTextColor)
+	}
+
+	connectionsTable.SetConnections(newDatabases)
+
+	// Now connect to the database
+	form.StatusText.SetText("Connecting to database...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+	App.Draw()
+
+	// Create database driver
+	var dbDriver drivers.Driver
+	switch dbType {
+	case drivers.DriverMySQL:
+		dbDriver = &drivers.MySQL{}
+	case drivers.DriverPostgres:
+		dbDriver = &drivers.Postgres{}
+	case drivers.DriverSqlite:
+		dbDriver = &drivers.SQLite{}
+	case drivers.DriverMSSQL:
+		dbDriver = &drivers.MSSQL{}
+	default:
+		form.StatusText.SetText("Unsupported database type: " + dbType).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		return
+	}
+
+	// Connect to database
+	err := dbDriver.Connect(connectionString)
+	if err != nil {
+		form.StatusText.SetText("Connection failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		return
+	}
+
+	// Success - navigate to home page
+	form.StatusText.SetText("Connected successfully!").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorGreen))
+	App.Draw()
+
+	// Create home page and navigate to it
+	newHome := NewHomePage(parsedDatabaseData, dbDriver)
+	newHome.Tree.SetCurrentNode(newHome.Tree.GetRoot())
+	newHome.Tree.Wrapper.SetTitle(parsedDatabaseData.Name)
+
+	// Add page to main pages and switch to it
+	mainPages.AddAndSwitchToPage(parsedDatabaseData.Name, newHome, true)
+	App.SetFocus(newHome.Tree)
+	App.Draw()
 }

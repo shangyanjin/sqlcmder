@@ -41,6 +41,7 @@ const (
 	QueryHistoryGroup = "queryhistory"
 	TabbedMenuGroup   = "tabbedmenu"
 	JSONViewerGroup   = "jsonviewer"
+	ConnectionFormGroup = "connectionform"
 )
 
 // Define a global KeymapSystem object with default keybinds

@@ -9,7 +9,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
-#### SQL Editor Shortcut Commands
+#### Connection Form Enhancements
+- **Added F3 (Save & Connect) functionality**
+  - F3 now saves connection configuration and immediately connects to the database
+  - Combines F1 (Save & Test) and database connection in one action
+  - Useful for quick database switching without manual navigation steps
+
+#### DSN Auto-Generation System
+- **Implemented intelligent DSN display system**
+  - **New connections**: Shows green hint `[DSN: (auto-generate if empty)]` when DSN field is empty
+  - **Edit connections**: Displays current DSN value with green hint `[DSN: postgres://...]`
+  - Visual feedback helps users understand DSN handling behavior
+  - Consistent styling across all connection operations
+
+- **F1, F2, F3 all support automatic DSN generation**
+  - F1 (Save & Test): Auto-generates and displays DSN if empty
+  - F2 (Auto DSN): Manually generates and updates DSN field
+  - F3 (Save & Connect): Auto-generates DSN for seamless connection workflow
+  - Unified prompt message `[green]DSN: ` for consistent user experience
+
+#### UI/UX Improvements
+
+##### Connection Form Enhancements
+- **DSN field status indication**
+  - Green colored DSN status messages match F2 Auto DSN style
+  - Clear indication when DSN is being auto-generated vs. manually specified
+  - Helpful for users working with multiple database types
+
+##### Button Style Unification
+- **Unified button background colors across all modals and forms**
+  - **Confirmation Modal (Yes/No buttons)**: Now use consistent `ButtonBackgroundColor`
+  - **Save Query Modal (Save/Cancel buttons)**: Updated to use `ButtonBackgroundColor`
+  - **Error Modal (Ok button)**: Now uses `ButtonBackgroundColor` for consistency
+  - **Connection Form buttons (F1/F2/F3/Esc)**: Already using unified color scheme
+  - Button activated state uses `InverseTextColor` for visual feedback
+  - Improved visual consistency throughout the application
+
+##### Button Text Color Distinction
+- **Clear visual distinction between selected and unselected buttons**
+  - **Unselected buttons**: Use dark text color (`SelectedTextColor`) for low-key appearance
+  - **Selected buttons**: Use bright yellow text color (`ButtonTextColor`) for high visibility
+  - Text color change makes it immediately obvious which button has focus
+  - Works consistently across all themes (Dark, Light, Solarized, Gruvbox, Nord)
+  - Improved UX for confirmation dialogs and modal interactions
+
+##### Delete Connection Functionality Fix
+- **Fixed delete connection modal interaction**
+  - Corrected closure variable capture to prevent reference issues
+  - Added explicit focus setting for confirmation modal
+  - Comprehensive logging added for debugging and validation
+  - Delete operation now properly updates connection list
+  - Added automated tests for deletion logic and button response handling
+
+##### SQL Editor Shortcut Commands
 - **Added backup and import commands in SQL editor**
   - Type `backup <filename>` to backup current database
   - Type `import <filename>` to import SQL file to current database
@@ -42,6 +94,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Updated SQL Editor documentation**
   - Added shortcut commands section
   - Database backup and import commands
+
+### Code Quality
+- **Improved code organization and consistency**
+  - Centralized button styling in all modal components
+  - Reduced code duplication in button style definitions
+  - Enhanced maintainability of UI components
 
 ### UI/UX Improvements
 

@@ -80,7 +80,9 @@ func NewResultsTable(listOfDBChanges *[]models.DBDMLChange, tree *Tree, dbdriver
 	errorModal.SetText("An error occurred")
 	errorModal.SetBackgroundColor(tcell.ColorRed)
 	errorModal.SetTextColor(app.Styles.PrimaryTextColor)
-	errorModal.SetButtonStyle(tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor))
+	errorModal.SetButtonStyle(tcell.StyleDefault.
+		Background(app.Styles.ButtonBackgroundColor).
+		Foreground(app.Styles.PrimaryTextColor))
 	errorModal.SetFocus(0)
 
 	loadingModal := tview.NewModal()

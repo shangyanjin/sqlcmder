@@ -9,11 +9,11 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
-	"sqlcmder/keymap"
-	"sqlcmder/cli"
 	"sqlcmder/drivers"
 	"sqlcmder/helpers"
+	"sqlcmder/keymap"
 	"sqlcmder/logger"
 	"sqlcmder/models"
 )
@@ -100,32 +100,77 @@ func NewConnectionSelection(connectionForm *ConnectionForm, connectionPages *mod
 			case commands.EditConnection:
 				connectionPages.SwitchToPage(pageNameConnectionForm)
 				connectionForm.NameField.SetText(selectedConnection.Name)
-				connectionForm.DSNField.SetText(selectedConnection.DSN)
+				connectionForm.DSNField.SetText(selectedConnection.GetDSN())
 				connectionForm.StatusText.SetText("")
+				// Show DSN hint/value for edit connection
+				connectionForm.showDSNHint()
 
 				connectionForm.SetAction(actionEditConnection)
 				return nil
 			case commands.DeleteConnection:
+				// Capture the current row and connections in this scope to avoid closure issues
+				currentRow := row
+				currentConnections := connections
+				selectedConnectionToDelete := selectedConnection
+
+				logger.Info("Delete connection initiated", map[string]any{
+					"connectionName":   selectedConnectionToDelete.Name,
+					"row":              currentRow,
+					"totalConnections": len(currentConnections),
+				})
+
 				confirmationModal := NewConfirmationModal("")
 
 				confirmationModal.SetDoneFunc(func(_ int, buttonLabel string) {
-					mainPages.RemovePage(pageNameConfirmation)
-					confirmationModal = nil
+					defer mainPages.RemovePage(pageNameConfirmation)
+
+					logger.Info("Delete confirmation response", map[string]any{
+						"buttonLabel":    buttonLabel,
+						"connectionName": selectedConnectionToDelete.Name,
+					})
 
 					if buttonLabel == "Yes" {
-						newConnections := append(connections[:row], connections[row+1:]...)
+						logger.Info("Deleting connection", map[string]any{
+							"connectionName":   selectedConnectionToDelete.Name,
+							"row":              currentRow,
+							"totalConnections": len(currentConnections),
+						})
+
+						newConnections := append(currentConnections[:currentRow], currentConnections[currentRow+1:]...)
+
+						logger.Info("New connections list after deletion", map[string]any{
+							"totalConnectionsBefore": len(currentConnections),
+							"totalConnectionsAfter":  len(newConnections),
+							"deletedConnection":      selectedConnectionToDelete.Name,
+						})
 
 						err := app.App.SaveConnections(newConnections)
 						if err != nil {
+							logger.Error("Failed to save connections after delete", map[string]any{
+								"error":          err.Error(),
+								"connectionName": selectedConnectionToDelete.Name,
+							})
 							connectionsTable.SetError(err)
 						} else {
+							logger.Info("Successfully saved connections after deletion", map[string]any{
+								"totalConnections":  len(newConnections),
+								"deletedConnection": selectedConnectionToDelete.Name,
+							})
 							connectionsTable.SetConnections(newConnections)
-						}
 
+							logger.Info("Updated connections table display", map[string]any{
+								"totalConnections": len(newConnections),
+							})
+						}
+					} else {
+						logger.Info("Delete operation cancelled by user", map[string]any{
+							"connectionName": selectedConnectionToDelete.Name,
+						})
 					}
 				})
 
 				mainPages.AddPage(pageNameConfirmation, confirmationModal, true, true)
+				App.SetFocus(confirmationModal)
 
 				return nil
 			}
@@ -144,6 +189,8 @@ func NewConnectionSelection(connectionForm *ConnectionForm, connectionPages *mod
 			connectionForm.DBNameField.SetText("")
 			connectionForm.DSNField.SetText("")
 			connectionForm.StatusText.SetText("")
+			// Show DSN hint for new connection
+			connectionForm.showDSNHint()
 			connectionPages.SwitchToPage(pageNameConnectionForm)
 		case commands.Quit:
 			if wrapper.HasFocus() {
@@ -169,7 +216,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 		variables := map[string]string{}
 
 		// Avoid getting the port when it's not requested.
-		waitsForPort := strings.Contains(connection.DSN, "${port}")
+		waitsForPort := strings.Contains(connection.GetDSN(), "${port}")
 		waitsForPort = waitsForPort || slices.ContainsFunc(connection.Commands, func(command *models.Command) bool {
 			return command.WaitForPort != ""
 		})
@@ -231,7 +278,17 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 			if variable == "" || value == "" {
 				continue
 			}
-			connection.DSN = strings.ReplaceAll(connection.DSN, "${"+variable+"}", value)
+			dsnValue := connection.GetDSN()
+			dsnValue = strings.ReplaceAll(dsnValue, "${"+variable+"}", value)
+			// Update the appropriate DSN field
+			if connection.DsnCustom != "" {
+				connection.DsnCustom = dsnValue
+			} else if connection.DsnAuto != "" {
+				connection.DsnAuto = dsnValue
+			} else {
+				connection.DSN = dsnValue
+			}
+			connection.SetDSNValue()
 		}
 	}
 
@@ -251,7 +308,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 		newDBDriver = &drivers.MSSQL{}
 	}
 
-	err := newDBDriver.Connect(connection.DSN)
+	err := newDBDriver.Connect(connection.GetDSN())
 	if err != nil {
 		cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
 		return App.Draw()

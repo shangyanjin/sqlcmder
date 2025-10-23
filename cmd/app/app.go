@@ -33,6 +33,8 @@ type Theme struct {
 
 	SidebarTitleBorderColor string
 	ButtonBackgroundColor   tcell.Color
+	ButtonTextColor         tcell.Color
+	ButtonUnselectedBgColor tcell.Color
 	UnfocusedBorderColor    tcell.Color
 	UnfocusedTextColor      tcell.Color
 	UnfocusedAccentColor    tcell.Color
@@ -66,11 +68,11 @@ func initializeTheme(themeName string) {
 	Styles = &Theme{
 		Theme: tview.Theme{
 			PrimitiveBackgroundColor:    scheme.PrimitiveBackgroundColor,
-			ContrastBackgroundColor:     tcell.ColorBlue,
-			MoreContrastBackgroundColor: tcell.ColorGreen,
+			ContrastBackgroundColor:     scheme.ContrastBackgroundColor,
+			MoreContrastBackgroundColor: scheme.MoreContrastBgColor,
 			BorderColor:                 scheme.Border,
 			TitleColor:                  scheme.TextColor,
-			GraphicsColor:               tcell.ColorGray,
+			GraphicsColor:               scheme.GraphicsColor,
 			PrimaryTextColor:            scheme.TextColor,
 			SecondaryTextColor:          scheme.AccentYellow,
 			TertiaryTextColor:           scheme.AccentGreen,
@@ -79,6 +81,8 @@ func initializeTheme(themeName string) {
 		},
 		SidebarTitleBorderColor: "#666A7E",
 		ButtonBackgroundColor:   scheme.ButtonBg,
+		ButtonTextColor:         scheme.ButtonTextColor,
+		ButtonUnselectedBgColor: scheme.ButtonUnselectedBgColor,
 		UnfocusedBorderColor:    scheme.UnfocusedBorder,
 		UnfocusedTextColor:      scheme.UnfocusedText,
 		UnfocusedAccentColor:    scheme.UnfocusedAccent,

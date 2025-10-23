@@ -96,7 +96,7 @@ func main() {
 			log.Fatal(err)
 		}
 		// Initialize the home page with the connection
-		mainPages.AddAndSwitchToPage(connection.DSN, ui.NewHomePage(*connection, driver).Flex, true)
+		mainPages.AddAndSwitchToPage(connection.GetDSN(), ui.NewHomePage(*connection, driver).Flex, true)
 	default:
 		log.Fatal("Only a single connection is allowed")
 	}

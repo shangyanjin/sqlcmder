@@ -17,8 +17,11 @@ type AppConfig struct {
 type Connection struct {
 	Name string
 
-	// either use this directly
-	DSN string // Data Source Name (connection string)
+	// DSN handling with priority: custom > auto-generated
+	DSN       string // Data Source Name (connection string) - kept for backward compatibility
+	DsnCustom string // User custom input DSN
+	DsnAuto   string // Auto-generated DSN
+	DsnValue  string // Final DSN value to use (custom or auto)
 
 	// or parse manually
 	Driver    string // Database driver (mysql, postgres, sqlite, mssql)
@@ -82,8 +85,20 @@ type PrimaryKeyInfo struct {
 	Value any
 }
 
-func (pki PrimaryKeyInfo) Equal(other PrimaryKeyInfo) bool {
-	return pki.Name == other.Name && pki.Value == other.Value
+// GetDSN returns the appropriate DSN value with priority: custom > auto-generated > legacy DSN
+func (c *Connection) GetDSN() string {
+	if c.DsnCustom != "" {
+		return c.DsnCustom
+	}
+	if c.DsnAuto != "" {
+		return c.DsnAuto
+	}
+	return c.DSN // Fallback to legacy DSN field
+}
+
+// SetDSNValue updates the DsnValue field based on current DSN fields
+func (c *Connection) SetDSNValue() {
+	c.DsnValue = c.GetDSN()
 }
 
 type DBDMLChange struct {

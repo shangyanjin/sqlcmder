@@ -34,11 +34,11 @@ func NewSaveQueryModal(connectionIdentifier, query string, onSave func()) *SaveQ
 			Background(app.Styles.SecondaryTextColor).
 			Foreground(app.Styles.ContrastSecondaryTextColor),
 	).SetButtonActivatedStyle(tcell.StyleDefault.
-		Background(app.Styles.SecondaryTextColor).
-		Foreground(app.Styles.ContrastSecondaryTextColor),
-	).SetButtonStyle(tcell.StyleDefault.
 		Background(app.Styles.InverseTextColor).
 		Foreground(app.Styles.ContrastSecondaryTextColor),
+	).SetButtonStyle(tcell.StyleDefault.
+		Background(app.Styles.ButtonBackgroundColor).
+		Foreground(app.Styles.PrimaryTextColor),
 	)
 
 	sqm.form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {

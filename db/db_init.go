@@ -43,7 +43,7 @@ func InitFromArg(connectionString string) (*models.Connection, drivers.Driver, e
 		return nil, nil, fmt.Errorf("could not handle database driver %s", connection.Driver)
 	}
 
-	err = newDBDriver.Connect(connection.DSN)
+	err = newDBDriver.Connect(connection.GetDSN())
 	if err != nil {
 		return nil, nil, fmt.Errorf("could not connect to database %s: %s", connectionString, err)
 	}
