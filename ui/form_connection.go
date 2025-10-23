@@ -67,9 +67,9 @@ func NewConnectionForm(connectionPages *models.ConnectionPages) *ConnectionForm 
 			}
 		case drivers.DriverMySQL:
 			if username != "" && password != "" {
-				connectionString = "mysql://" + username + ":" + password + "@tcp(" + hostname + ":" + port + ")/" + database
+				connectionString = "mysql://" + username + ":" + password + "@" + hostname + ":" + port + "/" + database
 			} else {
-				connectionString = "mysql://@tcp(" + hostname + ":" + port + ")/" + database
+				connectionString = "mysql://" + hostname + ":" + port + "/" + database
 			}
 		case drivers.DriverSqlite:
 			connectionString = database
@@ -470,9 +470,9 @@ func (form *ConnectionForm) buildConnectionString(dbType, hostname, port, userna
 
 	case drivers.DriverMySQL:
 		if username != "" && password != "" {
-			connectionString = "mysql://" + username + ":" + password + "@tcp(" + hostname + ":" + port + ")/" + database
+			connectionString = "mysql://" + username + ":" + password + "@" + hostname + ":" + port + "/" + database
 		} else {
-			connectionString = "mysql://@tcp(" + hostname + ":" + port + ")/" + database
+			connectionString = "mysql://" + hostname + ":" + port + "/" + database
 		}
 
 	case drivers.DriverSqlite:
