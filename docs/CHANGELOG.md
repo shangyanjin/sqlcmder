@@ -159,6 +159,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Improved code organization with predictable file names
   - Easier to locate related components using consistent prefix patterns
 
+#### Theme Color System Enhancement
+- **Replaced all hardcoded colors with theme-managed colors**
+  - Added `ErrorColor`, `WarningColor`, `SuccessColor` to ColorScheme struct
+  - Implemented theme-specific status colors for all 5 themes (Dark, Light, Solarized, Gruvbox, Nord)
+  - Replaced hardcoded `tcell.ColorRed` with `app.Styles.ErrorColor` for error messages
+  - Replaced hardcoded `tcell.ColorYellow` with `app.Styles.WarningColor` for warning messages
+  - Replaced hardcoded `tcell.ColorGreen` with `app.Styles.SuccessColor` for success messages
+  - Updated all UI components to use theme system: form_connection, page_connection_selection, table_view, modal_query_preview
+  - Ensures consistent color theming across all status messages
+  - Improved maintainability: theme colors now centrally managed in one location
+
 ## [0.3.3] - 2025-10-22
 
 ### Theme System Overhaul
