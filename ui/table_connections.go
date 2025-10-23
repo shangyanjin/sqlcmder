@@ -31,7 +31,7 @@ func NewConnectionsTable() *ConnectionsTable {
 	}
 
 	table.SetOffset(5, 0)
-	table.SetSelectedStyle(tcell.StyleDefault.Foreground(app.Styles.SecondaryTextColor).Background(tview.Styles.PrimitiveBackgroundColor))
+	table.SetSelectedStyle(tcell.StyleDefault.Foreground(app.Styles.SecondaryTextColor).Background(app.Styles.PrimitiveBackgroundColor))
 
 	// Set selection changed callback to update * marker
 	table.SetSelectionChangedFunc(func(row, column int) {

@@ -31,8 +31,8 @@ func NewResultsFilter() *ResultsTableFilter {
 	recordsFilter.Label.SetText("WHERE")
 	recordsFilter.Label.SetBorderPadding(0, 0, 0, 1)
 
-	recordsFilter.Input.SetPlaceholder("/ WHERE clause filter")
-	recordsFilter.Input.SetPlaceholderStyle(tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(tview.Styles.PrimitiveBackgroundColor))
+	recordsFilter.Input.SetPlaceholder("  Press / to search")
+	recordsFilter.Input.SetPlaceholderStyle(tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(app.Styles.PrimitiveBackgroundColor))
 	recordsFilter.Input.SetFieldBackgroundColor(app.Styles.PrimitiveBackgroundColor)
 	recordsFilter.Input.SetFieldTextColor(app.Styles.PrimaryTextColor)
 	recordsFilter.Input.SetDoneFunc(func(key tcell.Key) {
@@ -53,7 +53,7 @@ func NewResultsFilter() *ResultsTableFilter {
 
 		}
 	})
-	recordsFilter.Input.SetAutocompleteStyles(app.Styles.PrimitiveBackgroundColor, tcell.StyleDefault.Foreground(tview.Styles.PrimaryTextColor).Background(tview.Styles.PrimitiveBackgroundColor), tcell.StyleDefault.Foreground(tview.Styles.SecondaryTextColor).Background(tview.Styles.PrimitiveBackgroundColor))
+	recordsFilter.Input.SetAutocompleteStyles(app.Styles.PrimitiveBackgroundColor, tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(app.Styles.PrimitiveBackgroundColor), tcell.StyleDefault.Foreground(app.Styles.SecondaryTextColor).Background(app.Styles.PrimitiveBackgroundColor))
 
 	recordsFilter.AddItem(recordsFilter.Label, 6, 0, false)
 	recordsFilter.AddItem(recordsFilter.Input, 0, 1, false)
