@@ -1012,8 +1012,8 @@ func (table *ResultsTable) StartEditingCell(row int, col int, callback func(newV
 	cell := table.GetCell(row, col)
 	inputField := tview.NewInputField()
 	inputField.SetText(cell.Text)
-	inputField.SetFieldBackgroundColor(app.Styles.PrimaryTextColor)
-	inputField.SetFieldTextColor(app.Styles.PrimitiveBackgroundColor)
+	inputField.SetFieldBackgroundColor(app.Styles.InverseTextColor)
+	inputField.SetFieldTextColor(app.Styles.PrimaryTextColor)
 	inputField.SetBorder(true)
 
 	inputField.SetDoneFunc(func(key tcell.Key) {

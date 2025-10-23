@@ -89,12 +89,49 @@ SQL# help insert                # Get SQL syntax help
 
 ## Keyboard Shortcuts
 
-- `Ctrl+\` - Open command line
-- `Ctrl+P` - Command palette
-- `Ctrl+F` - Search tree
-- `Ctrl+Left/Right` - Switch panels
-- `Up/Down` - Navigate history (in command line)
-- `?` or `help` - Show help
+### Global Shortcuts
+| Key | Action |
+|-----|--------|
+| `q` | Quit application |
+| `Ctrl+E` | Open SQL editor |
+| `Backspace` | Return to connection selection |
+| `?` | Show keybindings popup |
+| `Ctrl+\` | Search tree |
+| `Ctrl+Left/Right` | Switch panels |
+
+### Table Operations
+| Key | Action |
+|-----|--------|
+| `c` | Edit table cell |
+| `d` | Delete row |
+| `o` | Add row |
+| `/` | Focus the filter input or SQL editor |
+| `Ctrl+S` | Commit changes |
+| `>` | Next page |
+| `<` | Previous page |
+| `K` | Sort ASC |
+| `J` | Sort DESC |
+| `H` | Focus tree panel |
+| `Ctrl+[` | Focus previous tab |
+| `Ctrl+]` | Focus next tab |
+| `X` | Close current tab |
+| `R` | Refresh the current table |
+
+### Tree Navigation
+| Key | Action |
+|-----|--------|
+| `L` | Focus table panel |
+| `G` | Focus last database tree node |
+| `g` | Focus first database tree node |
+| `Ctrl+U` | Scroll 5 items up |
+| `Ctrl+D` | Scroll 5 items down |
+
+### SQL Editor
+| Key | Action |
+|-----|--------|
+| `Ctrl+R` | Run the SQL statement |
+| `Ctrl+Space` | Open external editor (Linux/macOS only) |
+| `Esc` | Unfocus editor |
 
 ## Backup & Import
 

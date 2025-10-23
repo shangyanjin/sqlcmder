@@ -29,7 +29,6 @@ const (
 	pageNameQueryHistory           = models.PageNameQueryHistory
 	pageNameSaveQuery              = models.PageNameSaveQuery
 	pageNameSavedQueryDelete       = models.PageNameSavedQueryDelete
-	pageNameCommandPalette         = models.PageNameCommandPalette
 )
 
 // Tab name aliases from models package

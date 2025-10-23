@@ -65,7 +65,7 @@ func initializeTheme(themeName string) {
 
 	Styles = &Theme{
 		Theme: tview.Theme{
-			PrimitiveBackgroundColor:    tcell.ColorDefault,
+			PrimitiveBackgroundColor:    scheme.PrimitiveBackgroundColor,
 			ContrastBackgroundColor:     tcell.ColorBlue,
 			MoreContrastBackgroundColor: tcell.ColorGreen,
 			BorderColor:                 scheme.Border,

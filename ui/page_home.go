@@ -8,13 +8,13 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
-	"sqlcmder/cli"
+	"sqlcmder/data/history"
 	"sqlcmder/drivers"
 	"sqlcmder/keymap"
 	"sqlcmder/logger"
 	"sqlcmder/models"
-	"sqlcmder/data/history"
 )
 
 type Home struct {
@@ -26,8 +26,6 @@ type Home struct {
 	HelpStatus           HelpStatus
 	HelpModal            *HelpModal
 	QueryHistoryModal    *QueryHistoryModal
-	CommandPalette       *CommandPalette
-	CommandLine          *CommandLine
 	CommandStatusBar     *tview.TextView
 	DBDriver             drivers.Driver
 	FocusedWrapper       string
@@ -87,55 +85,12 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 
 	home.QueryHistoryModal = qhm
 
-	// Initialize command palette
-	commandPalette := NewCommandPalette()
-	commandPalette.OnClose = func() {
-		mainPages.RemovePage(pageNameCommandPalette)
-		app.App.SetFocus(home.Tree)
-	}
-
-	ctx := CommandContext{
-		DB:              dbdriver,
-		CurrentDatabase: connection.DBName,
-		Connection:      connectionIdentifier,
-		ConnectionModel: &connection,
-	}
-	commandPalette.SetContext(ctx)
-
-	// Register commands
-	RegisterDatabaseCommands(commandPalette)
-	RegisterTableCommands(commandPalette)
-
-	home.CommandPalette = commandPalette
 	home.CurrentDatabase = connection.DBName
-
-	// Create command line
-	commandLine := NewCommandLine()
-	commandLine.OnCommand = func(cmd string) {
-		ctx := CommandContext{
-			DB:              home.DBDriver,
-			CurrentDatabase: home.CurrentDatabase,
-			CurrentTable:    home.CurrentTable,
-			Connection:      home.ConnectionIdentifier,
-			ConnectionModel: &home.Connection,
-		}
-		commandLine.ExecuteCommand(cmd, ctx)
-	}
-	commandLine.OnCancel = func() {
-		logger.Debug("CommandLine OnCancel - refocus to table", nil)
-		// Just refocus back to table
-		tab := home.TabbedPane.GetCurrentTab()
-		if tab != nil {
-			table := tab.Content.(*ResultsTable)
-			app.App.SetFocus(table)
-		}
-	}
-	home.CommandLine = commandLine
 
 	// Create command status bar
 	commandStatusBar := tview.NewTextView()
 	commandStatusBar.SetDynamicColors(true)
-	commandStatusBar.SetText(" [yellow]Ctrl+Left/Right[white]: Switch Panel | [yellow]Ctrl+P/K[white]: Command Palette | [yellow]Ctrl+\\[white]: Command Line | [yellow]Ctrl+F[white]: Search | [yellow]?[white]: Help")
+	commandStatusBar.SetText(" [yellow]Ctrl+Left/Right[white]: Switch Panel | [yellow]CTRL + e[white]: SQL editor | [yellow]Ctrl+\\[white]: Search | [yellow]?[white]: Help")
 	commandStatusBar.SetBackgroundColor(app.Styles.PrimitiveBackgroundColor)
 	commandStatusBar.SetTextColor(app.Styles.PrimaryTextColor)
 	home.CommandStatusBar = commandStatusBar
@@ -151,7 +106,6 @@ func NewHomePage(connection models.Connection, dbdriver drivers.Driver) *Home {
 	rightWrapper.SetInputCapture(home.rightWrapperInputCapture)
 	rightWrapper.AddItem(tabbedPane.HeaderContainer, 1, 0, false)
 	rightWrapper.AddItem(tabbedPane.Pages, 0, 1, false)
-	rightWrapper.AddItem(commandLine, 2, 0, false)      // Command line 2 rows, always visible
 	rightWrapper.AddItem(commandStatusBar, 1, 0, false) // Status bar always visible
 
 	maincontent.AddItem(leftWrapper, 30, 1, false)
@@ -183,10 +137,9 @@ func (home *Home) subscribeToTreeChanges() {
 			databaseName := home.Tree.GetSelectedDatabase()
 			tableName := stateChange.Value.(string)
 
-			// Update context for command palette
+			// Update context
 			home.CurrentDatabase = databaseName
 			home.CurrentTable = tableName
-			home.UpdateCommandContext()
 
 			tabReference := fmt.Sprintf("%s.%s", databaseName, tableName)
 
@@ -472,27 +425,6 @@ func (home *Home) homeInputCapture(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 	}
 
-	// Ctrl+P or Ctrl+K to open command palette
-	if event.Key() == tcell.KeyCtrlP || event.Key() == tcell.KeyCtrlK {
-		if table == nil || (!table.GetIsEditing() && !table.GetIsFiltering()) {
-			logger.Debug("Opening command palette", nil)
-			home.ShowCommandPalette()
-			return nil
-		}
-	}
-
-	// Ctrl+\ to focus command line - SIMPLE FOCUS SWITCH
-	if event.Key() == tcell.KeyCtrlBackslash {
-		logger.Debug("Ctrl+\\ - Focus command line", nil)
-		if table == nil || (!table.GetIsEditing() && !table.GetIsFiltering()) {
-			// Clear and focus command line input field
-			home.CommandLine.SetText("")
-			app.App.SetFocus(home.CommandLine.InputField)
-			logger.Debug("Command line focused", nil)
-			return nil
-		}
-	}
-
 	command := keymap.Keymaps.Group(keymap.HomeGroup).Resolve(event)
 
 	if command != commands.Noop {
@@ -595,21 +527,4 @@ func (home *Home) createOrFocusEditorTab() {
 	home.HelpStatus.SetStatusOnEditorView()
 	home.focusRightWrapper()
 	App.ForceDraw()
-}
-
-func (home *Home) UpdateCommandContext() {
-	ctx := CommandContext{
-		DB:              home.DBDriver,
-		CurrentDatabase: home.CurrentDatabase,
-		CurrentTable:    home.CurrentTable,
-		Connection:      home.ConnectionIdentifier,
-		ConnectionModel: &home.Connection,
-	}
-	home.CommandPalette.SetContext(ctx)
-}
-
-func (home *Home) ShowCommandPalette() {
-	home.UpdateCommandContext()
-	home.CommandPalette.Show()
-	mainPages.AddPage(pageNameCommandPalette, home.CommandPalette, true, true)
 }

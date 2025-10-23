@@ -3,16 +3,12 @@ package ui
 import (
 	"github.com/rivo/tview"
 
-	"sqlcmder/cmd/app"
 	"sqlcmder/logger"
 )
 
 const (
 	pageNameCommandModal = "command_modal"
 )
-
-// Global command line reference for displaying messages
-var globalCommandLine *CommandLine
 
 // ShowModal displays a modal dialog
 func ShowModal(modal tview.Primitive, width, height int) {
@@ -34,68 +30,22 @@ func CloseModal() {
 	mainPages.RemovePage(pageNameCommandModal)
 }
 
-// truncateMessage truncates message to fit in one line
-func truncateMessage(message string, maxLen int) string {
-	if len(message) <= maxLen {
-		return message
-	}
-	return message[:maxLen-3] + "..."
-}
-
-// ShowError displays an error message in command line style
+// ShowError displays an error message (simplified without command line)
 func ShowError(message string) {
-	logger.Debug("ShowError called", map[string]any{
-		"message":           message,
-		"globalCommandLine": globalCommandLine != nil,
-		"hasMessageView":    globalCommandLine != nil && globalCommandLine.MessageView != nil,
-		"hasInputField":     globalCommandLine != nil && globalCommandLine.InputField != nil,
-	})
-
-	// Display in message row - simple direct update
-	if globalCommandLine != nil && globalCommandLine.MessageView != nil {
-		logger.Debug("Setting error message to MessageView", nil)
-		// Truncate message to avoid breaking table layout (max ~100 chars)
-		displayMsg := truncateMessage(message, 100)
-		globalCommandLine.MessageView.SetText("[red]ERROR: " + displayMsg)
-		globalCommandLine.InputField.SetText("")
-		// Force UI redraw to prevent layout issues
-		app.App.Draw()
-		// Auto-restore focus to input field
-		app.App.SetFocus(globalCommandLine.InputField)
-		logger.Debug("Error message set and focus restored", nil)
-	} else {
-		logger.Debug("Cannot show error - globalCommandLine not initialized", nil)
-	}
+	logger.Error("Error", map[string]any{"message": message})
+	// For now, just log the error since command line is removed
 }
 
-// ShowSuccess displays a success message in command line style
+// ShowSuccess displays a success message (simplified without command line)
 func ShowSuccess(message string) {
-	// Display in message row - simple direct update
-	if globalCommandLine != nil && globalCommandLine.MessageView != nil {
-		// Truncate message to avoid breaking table layout
-		displayMsg := truncateMessage(message, 100)
-		globalCommandLine.MessageView.SetText("[green]OK: " + displayMsg)
-		globalCommandLine.InputField.SetText("")
-		// Force UI redraw to prevent layout issues
-		app.App.Draw()
-		// Auto-restore focus to input field
-		app.App.SetFocus(globalCommandLine.InputField)
-	}
+	logger.Info("Success", map[string]any{"message": message})
+	// For now, just log the success since command line is removed
 }
 
-// ShowInfo displays an information message in command line style
+// ShowInfo displays an information message (simplified without command line)
 func ShowInfo(message string) {
-	// Display in message row - simple direct update
-	if globalCommandLine != nil && globalCommandLine.MessageView != nil {
-		// Truncate message to avoid breaking table layout
-		displayMsg := truncateMessage(message, 100)
-		globalCommandLine.MessageView.SetText("[blue]INFO: " + displayMsg)
-		globalCommandLine.InputField.SetText("")
-		// Force UI redraw to prevent layout issues
-		app.App.Draw()
-		// Auto-restore focus to input field
-		app.App.SetFocus(globalCommandLine.InputField)
-	}
+	logger.Info("Info", map[string]any{"message": message})
+	// For now, just log the info since command line is removed
 }
 
 // RefreshTree refreshes the database tree view

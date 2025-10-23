@@ -6,10 +6,10 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
-	"sqlcmder/keymap"
-	"sqlcmder/cli"
 	"sqlcmder/helpers"
+	"sqlcmder/keymap"
 	"sqlcmder/models"
 )
 

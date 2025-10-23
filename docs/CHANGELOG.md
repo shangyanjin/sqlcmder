@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### UI/UX Improvements
+
+#### Command Palette Removal
+- **Removed Command Palette functionality**
+  - Deleted `ui/cmd_palette.go`, `ui/cmd_palette_database.go`, `ui/cmd_palette_table.go`
+  - Removed `Ctrl+P/K` shortcuts for Command Palette
+  - Simplified command line interface by removing complex command system
+  - Updated status bar to remove Command Palette references
+
+#### Command Line Removal
+- **Removed Command Line input area**
+  - Deleted `ui/cmd_line_input.go` file
+  - Removed `Ctrl+\` shortcut for Command Line
+  - Simplified UI by removing bottom command input area
+  - Updated status bar to remove Command Line references
+  - Simplified `ui/cmd_helpers.go` to only log messages instead of displaying in UI
+
+#### Keyboard Shortcuts Updates
+- **Updated global shortcuts**
+  - Changed `Ctrl+F` to `Ctrl+\` for tree search functionality
+  - Updated status bar hints to reflect new shortcut mappings
+  - Updated README.md with current keyboard shortcuts
+
+#### SQL Editor Improvements
+- **Enhanced SQL editor placeholder text**
+  - Changed from "Enter your SQL query here..." to "Input your SQL query here, press ctrl+R run, ESC return"
+  - Added clear instructions for running queries (`Ctrl+R`) and returning (`ESC`)
+  - Improved user guidance for SQL editor usage
+
+#### Table Interface Enhancements
+- **Added table shortcut hints in pagination area**
+  - Displayed common table shortcuts: `c Edit`, `d Delete`, `o Add`, `<> Page`, `CTRL+s Commit`
+  - Used color-coded shortcuts (yellow) with white action descriptions
+  - Added separator between shortcuts and pagination info
+  - Improved discoverability of table operations
+
+#### Theme System Updates
+- **Added PrimitiveBackgroundColor to dark theme**
+  - Extended `ColorScheme` struct with `PrimitiveBackgroundColor` field
+  - Defined specific `PrimitiveBackgroundColor` values for all themes
+  - Updated theme initialization to use theme-defined colors instead of hardcoded values
+  - Improved color consistency across UI components
+
+#### Code Cleanup
+- **Unified field edit colors**
+  - Standardized database field editing colors to use `InverseTextColor` for background
+  - Used `PrimaryTextColor` for foreground in field editing
+  - Aligned field edit colors with dark theme settings
+  - Improved visual consistency across table and sidebar editing
+
 ## [0.3.3] - 2025-10-22
 
 ### Theme System Overhaul

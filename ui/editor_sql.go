@@ -30,7 +30,7 @@ func NewSQLEditor(connectionURL string) *SQLEditor {
 	textarea := tview.NewTextArea()
 	textarea.SetBorder(true)
 	textarea.SetTitleAlign(tview.AlignLeft)
-	textarea.SetPlaceholder("Enter your SQL query here...")
+	textarea.SetPlaceholder("Input your SQL query here, press ctrl+R run, ESC return")
 	sqlEditor := &SQLEditor{
 		TextArea: textarea,
 		state: &SQLEditorState{
