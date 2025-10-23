@@ -33,7 +33,7 @@ func NewResultsFilter() *ResultsTableFilter {
 
 	// Set input field styling - unified background color for input and autocomplete dropdown
 	fieldBgColor := app.Styles.PrimitiveBackgroundColor
-	dropdownBgColor := app.Styles.SecondaryTextColor // Yellow for better visibility
+	dropdownBgColor := app.Styles.ButtonBackgroundColor // Light gray like dialog buttons
 
 	recordsFilter.Input.SetPlaceholder("  Press / to search")
 	recordsFilter.Input.SetPlaceholderStyle(tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(fieldBgColor))
@@ -58,7 +58,7 @@ func NewResultsFilter() *ResultsTableFilter {
 		}
 	})
 
-	// Autocomplete dropdown uses yellow background for better visibility
+	// Autocomplete dropdown uses light gray background matching dialog buttons
 	recordsFilter.Input.SetAutocompleteStyles(
 		dropdownBgColor,
 		tcell.StyleDefault.Foreground(app.Styles.PrimaryTextColor).Background(dropdownBgColor),
