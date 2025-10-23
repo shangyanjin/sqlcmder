@@ -75,58 +75,8 @@ go build -o sqlcmder.exe
 # Run the application
 ./sqlcmder
 
-# Connect to database using DSN
-# See DSN Examples section below for format details
-```
-
-## DSN Connection Examples
-
-SQLCmder supports various database connection string formats:
-
-### PostgreSQL
-```
-postgres://user:pass@localhost/dbname
-pg://user:pass@localhost/dbname?sslmode=disable
-```
-
-### MySQL
-```
-# Standard format (recommended)
-user:pass@tcp(localhost:3306)/dbname
-
-# With mysql:// prefix
-mysql://user:pass@tcp(localhost:3306)/dbname
-
-# Unix socket
-/var/run/mysqld/mysqld.sock
-```
-
-### SQLite
-```
-file:myfile.sqlite3?loc=auto
-/path/to/sqlite/file/test.db
-```
-
-### SQL Server
-```
-sqlserver://user:pass@remote-host.com/dbname
-mssql://user:pass@remote-host.com/instance/dbname
-ms://user:pass@remote-host.com:port/instance/dbname?keepAlive=10
-```
-
-### Oracle
-```
-oracle://user:pass@somehost.com/sid
-```
-
-### SAP HANA
-```
-sap://user:pass@localhost/dbname
-```
-
-### ODBC
-```
-odbc+postgres://user:pass@localhost:port/dbname?option1=value1
+# Connect to database
+# Use connection form
 ```
 
 ## Keyboard Shortcuts
@@ -178,34 +128,6 @@ odbc+postgres://user:pass@localhost:port/dbname?option1=value1
 **Shortcut Commands:**
 - `backup <filename>` - Backup current database
 - `import <filename>` - Import SQL file to current database
-
-## Backup & Import
-
-SQLCmder supports database backup and import operations:
-
-### Backup
-```bash
-SQL# db backup mydb_backup.sql
-```
-- Backups are saved to `./backup/` directory
-- MySQL/PostgreSQL require CLI tools (`mysqldump`, `pg_dump`)
-- SQLite uses direct file copy
-- MSSQL requires `sqlcmd` tool
-
-### Import
-```bash
-SQL# db import mydb_backup.sql
-```
-- Looks for files in current directory or `./backup/`
-- MySQL/PostgreSQL require CLI tools (`mysql`, `psql`)
-- SQLite executes SQL statements directly
-- MSSQL requires `sqlcmd` tool
-
-### Requirements
-- **MySQL**: Install MySQL client tools
-- **PostgreSQL**: Install PostgreSQL client tools
-- **SQLite**: Built-in support (no external tools needed)
-- **MSSQL**: Install SQL Server command-line tools
 
 ## Configuration
 
@@ -263,6 +185,38 @@ sqlcmder/
 ## Credits
 
 Based on [LazySQL](https://github.com/jorgerojas26/sqlcmder) by Jorge Rojas.
+
+## DSN Connection Examples
+
+SQLCmder supports various database connection string formats:
+
+```
+# PostgreSQL
+postgres://user:pass@localhost/dbname
+pg://user:pass@localhost/dbname?sslmode=disable
+
+# MySQL
+mysql://user:pass@localhost/dbname
+mysql:/var/run/mysqld/mysqld.sock
+
+# SQL Server
+sqlserver://user:pass@remote-host.com/dbname
+mssql://user:pass@remote-host.com/instance/dbname
+ms://user:pass@remote-host.com:port/instance/dbname?keepAlive=10
+
+# Oracle
+oracle://user:pass@somehost.com/sid
+
+# SAP HANA
+sap://user:pass@localhost/dbname
+
+# SQLite
+file:myfile.sqlite3?loc=auto
+/path/to/sqlite/file/test.db
+
+# ODBC
+odbc+postgres://user:pass@localhost:port/dbname?option1=value1
+```
 
 ## License
 
