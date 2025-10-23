@@ -1597,7 +1597,16 @@ func (table *ResultsTable) handleBackupCommand(filename string) {
 		return
 	}
 
-	if table.Editor.currentDatabase == "" {
+	// Get current database from tree or editor
+	currentDB := table.Editor.currentDatabase
+	if currentDB == "" {
+		currentDB = table.Tree.GetSelectedDatabase()
+	}
+	if currentDB == "" {
+		currentDB = table.GetDatabaseName()
+	}
+
+	if currentDB == "" {
 		table.SetError("No database selected", nil)
 		return
 	}
@@ -1608,7 +1617,7 @@ func (table *ResultsTable) handleBackupCommand(filename string) {
 	// Create context for backup command
 	ctx := commands.Context{
 		DB:              table.Editor.DBDriver,
-		CurrentDatabase: table.Editor.currentDatabase,
+		CurrentDatabase: currentDB,
 		Connection:      table.Editor.connectionIdentifier,
 	}
 
@@ -1638,7 +1647,16 @@ func (table *ResultsTable) handleImportCommand(filename string) {
 		return
 	}
 
-	if table.Editor.currentDatabase == "" {
+	// Get current database from tree or editor
+	currentDB := table.Editor.currentDatabase
+	if currentDB == "" {
+		currentDB = table.Tree.GetSelectedDatabase()
+	}
+	if currentDB == "" {
+		currentDB = table.GetDatabaseName()
+	}
+
+	if currentDB == "" {
 		table.SetError("No database selected", nil)
 		return
 	}
@@ -1649,7 +1667,7 @@ func (table *ResultsTable) handleImportCommand(filename string) {
 	// Create context for import command
 	ctx := commands.Context{
 		DB:              table.Editor.DBDriver,
-		CurrentDatabase: table.Editor.currentDatabase,
+		CurrentDatabase: currentDB,
 		Connection:      table.Editor.connectionIdentifier,
 	}
 
@@ -1662,7 +1680,7 @@ func (table *ResultsTable) handleImportCommand(filename string) {
 			table.EditorPages.SwitchToPage(pageNameTableEditorResultsInfo)
 			App.SetFocus(table.Editor)
 			// Refresh tree to show updated data
-			table.Tree.Refresh(table.Editor.currentDatabase)
+			table.Tree.Refresh(currentDB)
 			App.Draw()
 		},
 		func(message string) {
@@ -1673,7 +1691,7 @@ func (table *ResultsTable) handleImportCommand(filename string) {
 		},
 		func() {
 			// Refresh callback
-			table.Tree.Refresh(table.Editor.currentDatabase)
+			table.Tree.Refresh(currentDB)
 		},
 	)
 }
