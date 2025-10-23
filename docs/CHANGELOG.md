@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Updated SQL Editor documentation**
   - Added shortcut commands section
-  - Documented backup and import commands
+  - Database backup and import commands
 
 ### UI/UX Improvements
 
