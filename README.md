@@ -13,9 +13,7 @@ A cross-platform Terminal UI database management tool with built-in command line
 - Use at your own risk - the author assumes no liability for any damages
 - Recommended for testing and development environments only
 - Always backup your data before use
-- **⛔ COMMERCIAL USE PROHIBITED**: This software is for personal and educational use only
-- **⛔ ENTERPRISE USE PROHIBITED**: Organizations, companies, and commercial entities are not permitted to use this software
-- **⛔ BUSINESS USE PROHIBITED**: Any business-related activities using this software are strictly forbidden
+- **Non-Commercial Use Only**: This software is for personal and educational use only. Commercial use, enterprise deployment, or any business-related activities are strictly prohibited.
 
 ## Installation
 
