@@ -22,7 +22,7 @@ func NewConnectionsTable() *ConnectionsTable {
 	wrapper := tview.NewFlex()
 
 	errorTextView := tview.NewTextView()
-	errorTextView.SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+	errorTextView.SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 
 	table := &ConnectionsTable{
 		Table:         tview.NewTable().SetSelectable(true, false),

@@ -283,7 +283,7 @@ func (form *ConnectionForm) saveAndTestConnection() {
 	dsn := form.DSNField.GetText()
 
 	if connectionName == "" {
-		form.StatusText.SetText("Connection name is required").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		form.StatusText.SetText("Connection name is required").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 		return
 	}
 
@@ -304,25 +304,25 @@ func (form *ConnectionForm) saveAndTestConnection() {
 	}
 
 	// Test connection first
-	form.StatusText.SetText("Testing connection...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+	form.StatusText.SetText("Testing connection...").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.WarningColor))
 	App.Draw()
 
 	// Test the connection
 	testResult := form.testConnectionSync(connectionString)
 	if !testResult {
-		form.StatusText.SetText("Connection test failed. Please check your settings.").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		form.StatusText.SetText("Connection test failed. Please check your settings.").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 		return
 	}
 
 	// If test passes, proceed with save
-	form.StatusText.SetText("Connection test passed. Saving...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorGreen))
+	form.StatusText.SetText("Connection test passed. Saving...").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.SuccessColor))
 	App.Draw()
 
 	// Validate connection string only if it's not empty
 	if connectionString != "" {
 		_, err := helpers.ParseConnectionString(connectionString)
 		if err != nil {
-			form.StatusText.SetText("Warning: " + err.Error() + " (saved anyway)").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+			form.StatusText.SetText("Warning: " + err.Error() + " (saved anyway)").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.WarningColor))
 		}
 	}
 
@@ -348,7 +348,7 @@ func (form *ConnectionForm) saveAndTestConnection() {
 		newDatabases = append(databases, parsedDatabaseData)
 		err := app.App.SaveConnections(newDatabases)
 		if err != nil {
-			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 			return
 		}
 		configPath := app.App.GetConfigFilePath()
@@ -368,7 +368,7 @@ func (form *ConnectionForm) saveAndTestConnection() {
 
 		err := app.App.SaveConnections(newDatabases)
 		if err != nil {
-			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 			return
 		}
 		configPath := app.App.GetConfigFilePath()
@@ -415,7 +415,7 @@ func (form *ConnectionForm) testConnectionSync(connectionString string) bool {
 func (form *ConnectionForm) testConnection(connectionString string) {
 	parsed, err := helpers.ParseConnectionString(connectionString)
 	if err != nil {
-		form.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		form.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 		return
 	}
 
@@ -437,7 +437,7 @@ func (form *ConnectionForm) testConnection(connectionString string) {
 	err = db.TestConnection(connectionString)
 
 	if err != nil {
-		form.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		form.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 	} else {
 		form.StatusText.SetText("Connection success").SetTextColor(app.Styles.TertiaryTextColor)
 	}
@@ -598,7 +598,7 @@ func (form *ConnectionForm) saveTestAndConnect() {
 	dsn := form.DSNField.GetText()
 
 	if connectionName == "" {
-		form.StatusText.SetText("Connection name is required").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		form.StatusText.SetText("Connection name is required").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 		return
 	}
 
@@ -619,25 +619,25 @@ func (form *ConnectionForm) saveTestAndConnect() {
 	}
 
 	// Test connection first
-	form.StatusText.SetText("Testing connection...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+	form.StatusText.SetText("Testing connection...").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.WarningColor))
 	App.Draw()
 
 	// Test the connection
 	testResult := form.testConnectionSync(connectionString)
 	if !testResult {
-		form.StatusText.SetText("Connection test failed. Please check your settings.").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		form.StatusText.SetText("Connection test failed. Please check your settings.").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 		return
 	}
 
 	// If test passes, proceed with save
-	form.StatusText.SetText("Connection test passed. Saving...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorGreen))
+	form.StatusText.SetText("Connection test passed. Saving...").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.SuccessColor))
 	App.Draw()
 
 	// Validate connection string only if it's not empty
 	if connectionString != "" {
 		_, err := helpers.ParseConnectionString(connectionString)
 		if err != nil {
-			form.StatusText.SetText("Warning: " + err.Error() + " (saved anyway)").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+			form.StatusText.SetText("Warning: " + err.Error() + " (saved anyway)").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.WarningColor))
 		}
 	}
 
@@ -663,7 +663,7 @@ func (form *ConnectionForm) saveTestAndConnect() {
 		newDatabases = append(databases, parsedDatabaseData)
 		err := app.App.SaveConnections(newDatabases)
 		if err != nil {
-			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 			return
 		}
 		configPath := app.App.GetConfigFilePath()
@@ -683,7 +683,7 @@ func (form *ConnectionForm) saveTestAndConnect() {
 
 		err := app.App.SaveConnections(newDatabases)
 		if err != nil {
-			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+			form.StatusText.SetText("Save failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 			return
 		}
 		configPath := app.App.GetConfigFilePath()
@@ -693,7 +693,7 @@ func (form *ConnectionForm) saveTestAndConnect() {
 	connectionsTable.SetConnections(newDatabases)
 
 	// Now connect to the database
-	form.StatusText.SetText("Connecting to database...").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorYellow))
+	form.StatusText.SetText("Connecting to database...").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.WarningColor))
 	App.Draw()
 
 	// Create database driver
@@ -708,19 +708,19 @@ func (form *ConnectionForm) saveTestAndConnect() {
 	case drivers.DriverMSSQL:
 		dbDriver = &drivers.MSSQL{}
 	default:
-		form.StatusText.SetText("Unsupported database type: " + dbType).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		form.StatusText.SetText("Unsupported database type: " + dbType).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 		return
 	}
 
 	// Connect to database
 	err := dbDriver.Connect(connectionString)
 	if err != nil {
-		form.StatusText.SetText("Connection failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		form.StatusText.SetText("Connection failed: " + err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 		return
 	}
 
 	// Success - navigate to home page
-	form.StatusText.SetText("Connected successfully!").SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorGreen))
+	form.StatusText.SetText("Connected successfully!").SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.SuccessColor))
 	App.Draw()
 
 	// Create home page and navigate to it

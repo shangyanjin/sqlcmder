@@ -119,6 +119,9 @@ type ColorScheme struct {
 	UnfocusedAccent          tcell.Color // Dimmed accent color (unfocused)
 	SelectedTextColor        tcell.Color // Text color on selected row (high contrast with AccentYellow)
 	PrimitiveBackgroundColor tcell.Color // Main background color for primitives
+	ErrorColor               tcell.Color // Error status color (red)
+	WarningColor             tcell.Color // Warning status color (yellow)
+	SuccessColor             tcell.Color // Success status color (green)
 }
 
 // Predefined color schemes using TrueColor to avoid terminal theme mapping issues
@@ -144,6 +147,9 @@ var ColorSchemes = map[string]*ColorScheme{
 		UnfocusedAccent:          tcell.NewRGBColor(140, 140, 140), // 失去焦点的彩色变灰
 		SelectedTextColor:        tcell.NewRGBColor(40, 40, 40),    // 未选中按钮文字（深色，低调）
 		PrimitiveBackgroundColor: tcell.NewRGBColor(25, 25, 25),    // 深色背景，用于主要UI元素
+		ErrorColor:               tcell.NewRGBColor(255, 100, 100), // Soft red
+		WarningColor:             tcell.NewRGBColor(255, 220, 90),  // Soft yellow
+		SuccessColor:             tcell.NewRGBColor(120, 200, 120), // Soft green
 	},
 	ThemeLight: {
 		Name:                     "Light",
@@ -166,6 +172,9 @@ var ColorSchemes = map[string]*ColorScheme{
 		UnfocusedAccent:          tcell.NewRGBColor(140, 140, 140), // 失去焦点的彩色变灰
 		SelectedTextColor:        tcell.NewRGBColor(255, 255, 255), // 选中行文字（白色，与深黄色背景高对比）
 		PrimitiveBackgroundColor: tcell.NewRGBColor(255, 255, 255), // 白色背景，用于主要UI元素
+		ErrorColor:               tcell.NewRGBColor(220, 50, 50),   // Deep red
+		WarningColor:             tcell.NewRGBColor(200, 160, 0),   // Deep yellow
+		SuccessColor:             tcell.NewRGBColor(50, 150, 50),   // Deep green
 	},
 	ThemeSolarized: {
 		Name:                     "Solarized Dark",
@@ -188,6 +197,9 @@ var ColorSchemes = map[string]*ColorScheme{
 		UnfocusedAccent:          tcell.NewRGBColor(88, 110, 117),  // Base01 dimmed
 		SelectedTextColor:        tcell.NewRGBColor(0, 43, 54),     // Base03 deep contrast
 		PrimitiveBackgroundColor: tcell.NewRGBColor(0, 43, 54),     // Base03 深色背景
+		ErrorColor:               tcell.NewRGBColor(220, 50, 47),   // Solarized red
+		WarningColor:             tcell.NewRGBColor(181, 137, 0),   // Solarized yellow
+		SuccessColor:             tcell.NewRGBColor(133, 153, 0),   // Solarized green
 	},
 	ThemeGruvbox: {
 		Name:                     "Gruvbox Dark",
@@ -210,6 +222,9 @@ var ColorSchemes = map[string]*ColorScheme{
 		UnfocusedAccent:          tcell.NewRGBColor(168, 153, 132), // fg2 dimmed
 		SelectedTextColor:        tcell.NewRGBColor(40, 40, 40),    // bg0_h deep contrast
 		PrimitiveBackgroundColor: tcell.NewRGBColor(29, 32, 33),    // bg0 深色背景
+		ErrorColor:               tcell.NewRGBColor(251, 73, 52),   // Gruvbox red
+		WarningColor:             tcell.NewRGBColor(250, 189, 47),  // Gruvbox yellow
+		SuccessColor:             tcell.NewRGBColor(184, 187, 38),  // Gruvbox green
 	},
 	ThemeNord: {
 		Name:                     "Nord",
@@ -232,6 +247,9 @@ var ColorSchemes = map[string]*ColorScheme{
 		UnfocusedAccent:          tcell.NewRGBColor(143, 157, 180), // Dimmed aurora
 		SelectedTextColor:        tcell.NewRGBColor(46, 52, 64),    // Polar Night 0 deep contrast
 		PrimitiveBackgroundColor: tcell.NewRGBColor(46, 52, 64),    // Polar Night 0 深色背景
+		ErrorColor:               tcell.NewRGBColor(191, 97, 106),  // Nord red
+		WarningColor:             tcell.NewRGBColor(235, 203, 139), // Nord yellow
+		SuccessColor:             tcell.NewRGBColor(163, 190, 140), // Nord green
 	},
 }
 

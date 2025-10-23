@@ -224,7 +224,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 		if waitsForPort {
 			port, err := helpers.GetFreePort()
 			if err != nil {
-				cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+				cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 				return App.Draw()
 			}
 			// Add port variable for the auto-generated port.
@@ -245,7 +245,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 			onCommandDone, waitToCaptureVariable := setupOutputVariableCommand(variables, command, markCommandComplete)
 
 			if err := helpers.RunCommand(App.Context(), cmd, onCommandDone); err != nil {
-				cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+				cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 				return App.Draw()
 			}
 
@@ -258,7 +258,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 				}
 
 				if portInt, err := strconv.Atoi(interpolatedPort); err != nil || portInt < 0 || portInt >= 1<<16 {
-					cs.StatusText.SetText("bad port: " + interpolatedPort).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+					cs.StatusText.SetText("bad port: " + interpolatedPort).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 					return App.Draw()
 				}
 
@@ -267,7 +267,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 				App.Draw()
 
 				if err := helpers.WaitForPort(App.Context(), interpolatedPort); err != nil {
-					cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+					cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 					return App.Draw()
 				}
 			}
@@ -310,7 +310,7 @@ func (cs *ConnectionSelection) Connect(connection models.Connection) *tview.Appl
 
 	err := newDBDriver.Connect(connection.GetDSN())
 	if err != nil {
-		cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(tcell.ColorRed))
+		cs.StatusText.SetText(err.Error()).SetTextStyle(tcell.StyleDefault.Foreground(app.Styles.ErrorColor))
 		return App.Draw()
 	}
 

@@ -48,7 +48,7 @@ func NewQueryPreviewModal(queries *[]models.DBDMLChange, dbdriver drivers.Driver
 	errorModal := tview.NewModal()
 	errorModal.AddButtons([]string{"Ok"})
 	errorModal.SetText("An error occurred")
-	errorModal.SetBackgroundColor(tcell.ColorRed)
+	errorModal.SetBackgroundColor(app.Styles.ErrorColor)
 	errorModal.SetTextColor(app.Styles.PrimaryTextColor)
 	errorModal.SetButtonStyle(tcell.StyleDefault.
 		Background(app.Styles.ButtonBackgroundColor).

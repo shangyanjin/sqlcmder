@@ -39,6 +39,9 @@ type Theme struct {
 	UnfocusedTextColor      tcell.Color
 	UnfocusedAccentColor    tcell.Color
 	SelectedTextColor       tcell.Color
+	ErrorColor              tcell.Color
+	WarningColor            tcell.Color
+	SuccessColor            tcell.Color
 }
 
 func init() {
@@ -87,6 +90,9 @@ func initializeTheme(themeName string) {
 		UnfocusedTextColor:      scheme.UnfocusedText,
 		UnfocusedAccentColor:    scheme.UnfocusedAccent,
 		SelectedTextColor:       scheme.SelectedTextColor,
+		ErrorColor:              scheme.ErrorColor,
+		WarningColor:            scheme.WarningColor,
+		SuccessColor:            scheme.SuccessColor,
 	}
 
 	tview.Styles = Styles.Theme
