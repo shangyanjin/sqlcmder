@@ -171,6 +171,10 @@ func (table *ResultsTable) WithFilter() *ResultsTable {
 
 func (table *ResultsTable) WithEditor() *ResultsTable {
 	editor := NewSQLEditor(table.ConnectionURL)
+	editor.SetDBDriver(table.DBDriver)
+	editor.SetConnectionIdentifier(table.connectionIdentifier)
+	editor.SetCurrentDatabase(table.GetDatabaseName())
+
 	editorPages := tview.NewPages()
 
 	editor.SetFocusFunc(func() {
@@ -639,7 +643,31 @@ func (table *ResultsTable) subscribeToEditorChanges() {
 		case eventSQLEditorQuery:
 			query := stateChange.Value.(string)
 			if query != "" {
-				queryLower := strings.ToLower(query)
+				queryLower := strings.ToLower(strings.TrimSpace(query))
+
+				// Check for backup command
+				if strings.HasPrefix(queryLower, "backup ") {
+					parts := strings.Fields(query)
+					if len(parts) >= 2 {
+						filename := parts[1]
+						table.handleBackupCommand(filename)
+					} else {
+						table.SetError("Usage: backup <filename>", nil)
+					}
+					continue
+				}
+
+				// Check for import command
+				if strings.HasPrefix(queryLower, "import ") {
+					parts := strings.Fields(query)
+					if len(parts) >= 2 {
+						filename := parts[1]
+						table.handleImportCommand(filename)
+					} else {
+						table.SetError("Usage: import <filename>", nil)
+					}
+					continue
+				}
 
 				if strings.Contains(queryLower, "select") {
 					table.SetLoading(true)
@@ -1560,6 +1588,94 @@ func (table *ResultsTable) colorChangedCells() {
 			}
 		}
 	}
+}
+
+// handleBackupCommand executes the backup command
+func (table *ResultsTable) handleBackupCommand(filename string) {
+	if table.Editor.DBDriver == nil {
+		table.SetError("Database driver not available", nil)
+		return
+	}
+
+	if table.Editor.currentDatabase == "" {
+		table.SetError("No database selected", nil)
+		return
+	}
+
+	table.SetLoading(true)
+	App.Draw()
+
+	// Create context for backup command
+	ctx := commands.Context{
+		DB:              table.Editor.DBDriver,
+		CurrentDatabase: table.Editor.currentDatabase,
+		Connection:      table.Editor.connectionIdentifier,
+	}
+
+	// Execute backup
+	commands.BackupDatabase(filename, ctx,
+		func(message string) {
+			// Success callback
+			table.SetLoading(false)
+			table.SetResultsInfo(message)
+			table.EditorPages.SwitchToPage(pageNameTableEditorResultsInfo)
+			App.SetFocus(table.Editor)
+			App.Draw()
+		},
+		func(message string) {
+			// Error callback
+			table.SetLoading(false)
+			table.SetError(message, nil)
+			App.Draw()
+		},
+	)
+}
+
+// handleImportCommand executes the import command
+func (table *ResultsTable) handleImportCommand(filename string) {
+	if table.Editor.DBDriver == nil {
+		table.SetError("Database driver not available", nil)
+		return
+	}
+
+	if table.Editor.currentDatabase == "" {
+		table.SetError("No database selected", nil)
+		return
+	}
+
+	table.SetLoading(true)
+	App.Draw()
+
+	// Create context for import command
+	ctx := commands.Context{
+		DB:              table.Editor.DBDriver,
+		CurrentDatabase: table.Editor.currentDatabase,
+		Connection:      table.Editor.connectionIdentifier,
+	}
+
+	// Execute import
+	commands.ImportDatabase(filename, ctx,
+		func(message string) {
+			// Success callback
+			table.SetLoading(false)
+			table.SetResultsInfo(message)
+			table.EditorPages.SwitchToPage(pageNameTableEditorResultsInfo)
+			App.SetFocus(table.Editor)
+			// Refresh tree to show updated data
+			table.Tree.Refresh(table.Editor.currentDatabase)
+			App.Draw()
+		},
+		func(message string) {
+			// Error callback
+			table.SetLoading(false)
+			table.SetError(message, nil)
+			App.Draw()
+		},
+		func() {
+			// Refresh callback
+			table.Tree.Refresh(table.Editor.currentDatabase)
+		},
+	)
 }
 
 func (table *ResultsTable) GetPrimitive() tview.Primitive {

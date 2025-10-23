@@ -75,16 +75,58 @@ go build -o sqlcmder.exe
 # Run the application
 ./sqlcmder
 
-# Connect to database
-# Use connection form or command line
+# Connect to database using DSN
+# See DSN Examples section below for format details
+```
 
-# In command line (Ctrl+\)
-SQL# db list                    # List databases
-SQL# db use mydb                # Switch database
-SQL# SELECT * FROM users;       # Execute SQL
-SQL# db backup mydb_backup.sql  # Backup database
-SQL# db import mydb_backup.sql  # Import from backup
-SQL# help insert                # Get SQL syntax help
+## DSN Connection Examples
+
+SQLCmder supports various database connection string formats:
+
+### PostgreSQL
+```
+postgres://user:pass@localhost/dbname
+pg://user:pass@localhost/dbname?sslmode=disable
+```
+
+### MySQL
+```
+# Standard format (recommended)
+user:pass@tcp(localhost:3306)/dbname
+
+# With mysql:// prefix
+mysql://user:pass@tcp(localhost:3306)/dbname
+
+# Unix socket
+/var/run/mysqld/mysqld.sock
+```
+
+### SQLite
+```
+file:myfile.sqlite3?loc=auto
+/path/to/sqlite/file/test.db
+```
+
+### SQL Server
+```
+sqlserver://user:pass@remote-host.com/dbname
+mssql://user:pass@remote-host.com/instance/dbname
+ms://user:pass@remote-host.com:port/instance/dbname?keepAlive=10
+```
+
+### Oracle
+```
+oracle://user:pass@somehost.com/sid
+```
+
+### SAP HANA
+```
+sap://user:pass@localhost/dbname
+```
+
+### ODBC
+```
+odbc+postgres://user:pass@localhost:port/dbname?option1=value1
 ```
 
 ## Keyboard Shortcuts
@@ -132,6 +174,10 @@ SQL# help insert                # Get SQL syntax help
 | `Ctrl+R` | Run the SQL statement |
 | `Ctrl+Space` | Open external editor (Linux/macOS only) |
 | `Esc` | Unfocus editor |
+
+**Shortcut Commands:**
+- `backup <filename>` - Backup current database
+- `import <filename>` - Import SQL file to current database
 
 ## Backup & Import
 

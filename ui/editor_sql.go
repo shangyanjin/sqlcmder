@@ -10,6 +10,7 @@ import (
 
 	commands "sqlcmder/cli"
 	"sqlcmder/cmd/app"
+	"sqlcmder/drivers"
 	"sqlcmder/keymap"
 	"sqlcmder/logger"
 	"sqlcmder/models"
@@ -21,16 +22,19 @@ type SQLEditorState struct {
 
 type SQLEditor struct {
 	*tview.TextArea
-	state         *SQLEditorState
-	subscribers   []chan models.StateChange
-	ConnectionURL string
+	state                *SQLEditorState
+	subscribers          []chan models.StateChange
+	ConnectionURL        string
+	DBDriver             drivers.Driver
+	connectionIdentifier string
+	currentDatabase      string
 }
 
 func NewSQLEditor(connectionURL string) *SQLEditor {
 	textarea := tview.NewTextArea()
 	textarea.SetBorder(true)
 	textarea.SetTitleAlign(tview.AlignLeft)
-	textarea.SetPlaceholder("Input your SQL query here, press ctrl+R run, ESC return")
+	textarea.SetPlaceholder("Input your SQL query here, press ctrl+R run, ESC return\nShortcut commands: backup <filename> | import <filename>")
 	sqlEditor := &SQLEditor{
 		TextArea: textarea,
 		state: &SQLEditorState{
@@ -87,6 +91,18 @@ func (s *SQLEditor) GetIsFocused() bool {
 
 func (s *SQLEditor) SetIsFocused(isFocused bool) {
 	s.state.isFocused = isFocused
+}
+
+func (s *SQLEditor) SetDBDriver(dbDriver drivers.Driver) {
+	s.DBDriver = dbDriver
+}
+
+func (s *SQLEditor) SetConnectionIdentifier(identifier string) {
+	s.connectionIdentifier = identifier
+}
+
+func (s *SQLEditor) SetCurrentDatabase(database string) {
+	s.currentDatabase = database
 }
 
 func (s *SQLEditor) Highlight() {
